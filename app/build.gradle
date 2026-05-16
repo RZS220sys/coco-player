@@ -1,0 +1,79 @@
+apply plugin: "com.android.application"
+apply plugin: "org.jetbrains.kotlin.android"
+
+android {
+    namespace "com.player.coco"
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "com.player.coco"
+        minSdk 24
+        targetSdk 33
+        versionCode 1
+        versionName "0.1.0"
+
+        ndk {
+            abiFilters "armeabi-v7a", "arm64-v8a", "x86_64"
+        }
+    }
+
+    sourceSets {
+        main {
+            assets.srcDirs = [
+                "src/main/assets",
+                "${rootProject.projectDir}/build/xray/android/assets"
+            ]
+            jniLibs.srcDirs = [
+                "src/main/jniLibs"
+            ]
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+        }
+    }
+
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging true
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+}
+
+tasks.register("checkXrayLibrary") {
+    doLast {
+        def aar = file("${rootProject.projectDir}/build/xray/android/aar/libv2ray.aar")
+        def geoip = file("${rootProject.projectDir}/build/xray/android/assets/geoip.dat")
+        def geosite = file("${rootProject.projectDir}/build/xray/android/assets/geosite.dat")
+        if (!aar.exists()) {
+            throw new GradleException(
+                "Missing AndroidLibXrayLite AAR. Run: powershell -NoProfile -ExecutionPolicy Bypass -File .\\scripts\\build-xray-android.ps1"
+            )
+        }
+        if (!geoip.exists() || !geosite.exists()) {
+            throw new GradleException(
+                "Missing AndroidLibXrayLite geo assets. Run: powershell -NoProfile -ExecutionPolicy Bypass -File .\\scripts\\build-xray-android.ps1"
+            )
+        }
+    }
+}
+
+preBuild.dependsOn("checkXrayLibrary")
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.7.10"
+    implementation "com.squareup.okhttp3:okhttp:4.10.0"
+    implementation files("${rootProject.projectDir}/build/xray/android/aar/libv2ray.aar")
+}

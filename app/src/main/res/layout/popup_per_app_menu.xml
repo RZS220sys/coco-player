@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_popup"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/select_all_apps"
+        style="@style/CocoPopupRow"
+        android:text="@string/per_app_select_all" />
+
+    <TextView
+        android:id="@+id/invert_app_selection"
+        style="@style/CocoPopupRow"
+        android:text="@string/per_app_invert_selection" />
+
+    <TextView
+        android:id="@+id/auto_select_proxy_app"
+        style="@style/CocoPopupRow"
+        android:text="@string/per_app_auto_select_proxy_app" />
+
+    <TextView
+        android:id="@+id/import_apps_clipboard"
+        style="@style/CocoPopupRow"
+        android:text="@string/per_app_import_clipboard" />
+
+    <TextView
+        android:id="@+id/export_apps_clipboard"
+        style="@style/CocoPopupRow"
+        android:text="@string/per_app_export_clipboard" />
+</LinearLayout>

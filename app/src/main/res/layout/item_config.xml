@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/config_item_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_chain_link_row"
+    android:foreground="?android:attr/selectableItemBackground">
+
+    <View
+        android:id="@+id/selected_indicator"
+        android:layout_width="4dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@color/coco_primary"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/config_item_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="26dp"
+        android:paddingTop="14dp"
+        android:paddingEnd="18dp"
+        android:paddingBottom="12dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/config_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="sans"
+                android:includeFontPadding="false"
+                android:maxLines="2"
+                android:textColor="@color/coco_title"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <ImageButton
+                android:id="@+id/config_more_button"
+                android:layout_width="@dimen/row_icon_size"
+                android:layout_height="@dimen/row_icon_size"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/action_config_options"
+                android:padding="9dp"
+                android:src="@drawable/ic_more_vert_24" />
+
+            <ImageButton
+                android:id="@+id/edit_button"
+                android:layout_width="@dimen/row_icon_size"
+                android:layout_height="@dimen/row_icon_size"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/action_edit"
+                android:padding="9dp"
+                android:src="@drawable/ic_edit_24" />
+
+            <ImageButton
+                android:id="@+id/delete_button"
+                android:layout_width="@dimen/row_icon_size"
+                android:layout_height="@dimen/row_icon_size"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/action_delete"
+                android:padding="9dp"
+                android:src="@drawable/ic_delete_24" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/config_endpoint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="middle"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:paddingTop="8dp"
+            android:textColor="@color/coco_body"
+            android:textSize="15sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingTop="10dp">
+
+            <TextView
+                android:id="@+id/config_type"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:includeFontPadding="false"
+                android:text="@string/chain_link_type"
+                android:textColor="@color/coco_primary"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/config_latency"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:textColor="@color/coco_primary"
+                android:textSize="13sp" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

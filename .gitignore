@@ -1,0 +1,14 @@
+.gradle/
+.kotlin/
+build/
+local.properties
+
+*.aab
+*.apk
+*.class
+*.jks
+*.key
+*.keystore
+*.log
+*.p12
+*.pem

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="coco_background">#101417</color>
+    <color name="coco_surface">#171D21</color>
+    <color name="coco_surface_raised">#20282D</color>
+    <color name="coco_drawer">#1D2024</color>
+    <color name="coco_menu">#17191D</color>
+    <color name="coco_title">#F0F4F2</color>
+    <color name="coco_body">#B9C5C1</color>
+    <color name="coco_muted">#798783</color>
+    <color name="coco_outline">#334047</color>
+    <color name="coco_primary">#35A06B</color>
+    <color name="coco_primary_dark">#257A51</color>
+    <color name="coco_connection_inactive">#565F5C</color>
+    <color name="coco_connection_active">#2E9E62</color>
+    <color name="coco_action_panel_start">#151C1A</color>
+    <color name="coco_action_panel_end">#1E2925</color>
+    <color name="coco_action_panel_stroke">#315943</color>
+    <color name="coco_action_chip">#1E332B</color>
+    <color name="coco_action_chip_stroke">#2F654C</color>
+    <color name="coco_action_divider">#2A3C36</color>
+</resources>

@@ -1,0 +1,499 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_app"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_height"
+        android:background="@drawable/bg_surface"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="8dp"
+        android:paddingEnd="12dp">
+
+        <ImageButton
+            android:id="@+id/back_button"
+            android:layout_width="@dimen/icon_button_size"
+            android:layout_height="@dimen/icon_button_size"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/action_back"
+            android:padding="10dp"
+            android:src="@drawable/ic_back_24" />
+
+        <TextView
+            android:id="@+id/title_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="sans"
+            android:includeFontPadding="false"
+            android:text="@string/screen_add_chain_link_title"
+            android:textColor="@color/coco_title"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/save_button"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_save_button"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:minWidth="82dp"
+            android:paddingStart="18dp"
+            android:paddingEnd="18dp"
+            android:text="@string/action_save"
+            android:textColor="@color/coco_title"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="24dp">
+
+            <LinearLayout style="@style/CocoFormSection">
+                <TextView
+                    style="@style/CocoSectionTitle"
+                    android:text="@string/section_identity" />
+
+                <TextView
+                    style="@style/CocoFieldLabel"
+                    android:text="@string/field_chain_name" />
+
+                <EditText
+                    android:id="@+id/chain_name_input"
+                    style="@style/CocoFormEdit"
+                    android:hint="@string/field_chain_name_hint"
+                    android:inputType="textCapSentences" />
+
+                <TextView
+                    style="@style/CocoFieldHelp"
+                    android:text="@string/required_marker" />
+            </LinearLayout>
+
+            <LinearLayout style="@style/CocoFormSection">
+                <TextView
+                    style="@style/CocoSectionTitle"
+                    android:text="@string/section_core_chain" />
+
+                <TextView
+                    style="@style/CocoFieldLabel"
+                    android:text="@string/field_sub_url" />
+
+                <EditText
+                    android:id="@+id/sub_url_input"
+                    style="@style/CocoFormEditMultiline"
+                    android:hint="@string/field_sub_url_hint" />
+
+                <TextView
+                    style="@style/CocoFieldHelp"
+                    android:text="@string/required_marker" />
+
+                <TextView
+                    style="@style/CocoFieldLabel"
+                    android:text="@string/field_exit_uri" />
+
+                <EditText
+                    android:id="@+id/exit_uri_input"
+                    style="@style/CocoFormEditMultiline"
+                    android:hint="@string/field_exit_uri_hint" />
+
+                <TextView
+                    style="@style/CocoFieldHelp"
+                    android:text="@string/required_marker" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/local_inbounds_section"
+                style="@style/CocoFormSection"
+                android:visibility="gone">
+
+                <LinearLayout style="@style/CocoOverrideSectionHeader">
+
+                    <TextView
+                        style="@style/CocoOverrideSectionTitle"
+                        android:text="@string/section_local_inbounds" />
+
+                    <TextView
+                        android:id="@+id/local_inbounds_override_status"
+                        style="@style/CocoOverrideStatusText"
+                        android:text="@string/override_status_global" />
+
+                    <ImageButton
+                        android:id="@+id/clear_local_inbounds_override"
+                        style="@style/CocoOverrideClearButton"
+                        android:contentDescription="@string/action_clear_section_override"
+                        android:src="@drawable/ic_close_24" />
+                </LinearLayout>
+
+                <TextView
+                    style="@style/CocoFieldLabel"
+                    android:text="@string/field_listen" />
+
+                <EditText
+                    android:id="@+id/listen_input"
+                    style="@style/CocoFormEdit"
+                    android:inputType="text"
+                    android:text="127.0.0.1" />
+
+                <TextView
+                    style="@style/CocoFieldLabel"
+                    android:text="@string/field_inbounds" />
+
+                <TextView
+                    android:id="@+id/inbounds_select"
+                    style="@style/CocoFormSelect"
+                    android:text="socks" />
+
+                <TextView
+                    style="@style/CocoFieldLabel"
+                    android:text="@string/field_socks_port" />
+
+                <EditText
+                    android:id="@+id/socks_port_input"
+                    style="@style/CocoFormEdit"
+                    android:inputType="number"
+                    android:text="10809" />
+
+                <TextView
+                    style="@style/CocoFieldLabel"
+                    android:text="@string/field_http_port" />
+
+                <EditText
+                    android:id="@+id/http_port_input"
+                    style="@style/CocoFormEdit"
+                    android:inputType="number"
+                    android:text="10809" />
+
+                <TextView
+                    style="@style/CocoFieldLabel"
+                    android:text="@string/field_internal_port" />
+
+                <EditText
+                    android:id="@+id/internal_port_input"
+                    style="@style/CocoFormEdit"
+                    android:inputType="number"
+                    android:text="10990" />
+            </LinearLayout>
+
+            <LinearLayout style="@style/CocoFormSection">
+                <TextView
+                    style="@style/CocoSectionTitle"
+                    android:text="@string/section_subscription" />
+
+                <TextView
+                    style="@style/CocoFieldLabel"
+                    android:text="@string/field_update_interval" />
+
+                <EditText
+                    android:id="@+id/update_interval_input"
+                    style="@style/CocoFormEdit"
+                    android:inputType="text"
+                    android:text="30s" />
+
+                <TextView
+                    style="@style/CocoFieldLabel"
+                    android:text="@string/field_fetch_timeout" />
+
+                <EditText
+                    android:id="@+id/fetch_timeout_input"
+                    style="@style/CocoFormEdit"
+                    android:inputType="numberDecimal"
+                    android:text="20.0" />
+
+                <TextView
+                    style="@style/CocoFieldLabel"
+                    android:text="@string/field_max_fronts" />
+
+                <EditText
+                    android:id="@+id/max_fronts_input"
+                    style="@style/CocoFormEdit"
+                    android:inputType="number"
+                    android:text="200" />
+
+                <Switch
+                    android:id="@+id/strict_switch"
+                    style="@style/CocoFormSwitch"
+                    android:text="@string/field_strict" />
+            </LinearLayout>
+
+            <LinearLayout style="@style/CocoFormSection">
+                <TextView
+                    style="@style/CocoSectionTitle"
+                    android:text="@string/section_health" />
+
+                <TextView
+                    style="@style/CocoFieldLabel"
+                    android:text="@string/field_observer" />
+
+                <TextView
+                    android:id="@+id/observer_select"
+                    style="@style/CocoFormSelect"
+                    android:text="burst" />
+
+                <TextView
+                    style="@style/CocoFieldLabel"
+                    android:text="@string/field_probe_url" />
+
+                <EditText
+                    android:id="@+id/probe_url_input"
+                    style="@style/CocoFormEdit"
+                    android:inputType="textUri"
+                    android:text="https://connectivitycheck.gstatic.com/generate_204" />
+
+                <TextView
+                    style="@style/CocoFieldLabel"
+                    android:text="@string/field_connectivity_url" />
+
+                <EditText
+                    android:id="@+id/connectivity_url_input"
+                    style="@style/CocoFormEdit"
+                    android:hint="@string/optional_marker"
+                    android:inputType="textUri" />
+
+                <TextView
+                    style="@style/CocoFieldLabel"
+                    android:text="@string/field_probe_interval" />
+
+                <EditText
+                    android:id="@+id/probe_interval_input"
+                    style="@style/CocoFormEdit"
+                    android:text="10s" />
+
+                <TextView
+                    style="@style/CocoFieldLabel"
+                    android:text="@string/field_probe_timeout" />
+
+                <EditText
+                    android:id="@+id/probe_timeout_input"
+                    style="@style/CocoFormEdit"
+                    android:text="5s" />
+
+                <TextView
+                    style="@style/CocoFieldLabel"
+                    android:text="@string/field_probe_sampling" />
+
+                <EditText
+                    android:id="@+id/probe_sampling_input"
+                    style="@style/CocoFormEdit"
+                    android:inputType="number"
+                    android:text="2" />
+
+                <TextView
+                    style="@style/CocoFieldLabel"
+                    android:text="@string/field_probe_method" />
+
+                <TextView
+                    android:id="@+id/probe_method_select"
+                    style="@style/CocoFormSelect"
+                    android:text="HEAD" />
+            </LinearLayout>
+
+            <LinearLayout style="@style/CocoFormSection">
+                <TextView
+                    style="@style/CocoSectionTitle"
+                    android:text="@string/section_balancer" />
+
+                <TextView
+                    style="@style/CocoFieldLabel"
+                    android:text="@string/field_balancer_strategy" />
+
+                <TextView
+                    android:id="@+id/balancer_strategy_select"
+                    style="@style/CocoFormSelect"
+                    android:text="leastLoad" />
+
+                <TextView
+                    style="@style/CocoFieldLabel"
+                    android:text="@string/field_expected" />
+
+                <EditText
+                    android:id="@+id/expected_input"
+                    style="@style/CocoFormEdit"
+                    android:inputType="number"
+                    android:text="4" />
+
+                <TextView
+                    style="@style/CocoFieldLabel"
+                    android:text="@string/field_max_rtt" />
+
+                <EditText
+                    android:id="@+id/max_rtt_input"
+                    style="@style/CocoFormEdit"
+                    android:hint="2s" />
+
+                <TextView
+                    style="@style/CocoFieldLabel"
+                    android:text="@string/field_baseline" />
+
+                <EditText
+                    android:id="@+id/baseline_input"
+                    style="@style/CocoFormEdit"
+                    android:hint="1s" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/global_overrides_button"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginStart="14dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="14dp"
+                android:background="@drawable/bg_save_button"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:text="@string/action_global_overrides"
+                android:textColor="@color/coco_title"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:id="@+id/routing_dns_section"
+                style="@style/CocoFormSection"
+                android:visibility="gone">
+
+                <LinearLayout style="@style/CocoOverrideSectionHeader">
+
+                    <TextView
+                        style="@style/CocoOverrideSectionTitle"
+                        android:text="@string/section_routing" />
+
+                    <TextView
+                        android:id="@+id/routing_dns_override_status"
+                        style="@style/CocoOverrideStatusText"
+                        android:text="@string/override_status_global" />
+
+                    <ImageButton
+                        android:id="@+id/clear_routing_dns_override"
+                        style="@style/CocoOverrideClearButton"
+                        android:contentDescription="@string/action_clear_section_override"
+                        android:src="@drawable/ic_close_24" />
+                </LinearLayout>
+
+                <TextView
+                    style="@style/CocoFieldLabel"
+                    android:text="@string/field_domain_strategy" />
+
+                <TextView
+                    android:id="@+id/domain_strategy_select"
+                    style="@style/CocoFormSelect"
+                    android:text="IPIfNonMatch" />
+
+                <TextView
+                    style="@style/CocoFieldLabel"
+                    android:text="@string/field_dns_servers" />
+
+                <EditText
+                    android:id="@+id/dns_servers_input"
+                    style="@style/CocoFormEdit"
+                    android:hint="@string/field_dns_servers_hint"
+                    android:text="1.1.1.1 8.8.8.8" />
+
+                <TextView
+                    style="@style/CocoFieldLabel"
+                    android:text="@string/field_domestic_dns_servers" />
+
+                <EditText
+                    android:id="@+id/domestic_dns_servers_input"
+                    style="@style/CocoFormEdit"
+                    android:hint="@string/field_domestic_dns_servers_hint" />
+
+                <Switch
+                    android:id="@+id/use_ipv4_switch"
+                    style="@style/CocoFormSwitch"
+                    android:checked="true"
+                    android:text="@string/field_use_ipv4" />
+
+                <Switch
+                    android:id="@+id/bypass_private_switch"
+                    style="@style/CocoFormSwitch"
+                    android:checked="true"
+                    android:text="@string/field_bypass_private" />
+
+                <Switch
+                    android:id="@+id/block_udp443_switch"
+                    style="@style/CocoFormSwitch"
+                    android:text="@string/field_block_udp443" />
+
+                <Switch
+                    android:id="@+id/sniff_route_only_switch"
+                    style="@style/CocoFormSwitch"
+                    android:checked="true"
+                    android:text="@string/field_sniff_route_only" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/runtime_section"
+                style="@style/CocoFormSection"
+                android:visibility="gone">
+
+                <LinearLayout style="@style/CocoOverrideSectionHeader">
+
+                    <TextView
+                        style="@style/CocoOverrideSectionTitle"
+                        android:text="@string/section_runtime" />
+
+                    <TextView
+                        android:id="@+id/runtime_override_status"
+                        style="@style/CocoOverrideStatusText"
+                        android:text="@string/override_status_global" />
+
+                    <ImageButton
+                        android:id="@+id/clear_runtime_override"
+                        style="@style/CocoOverrideClearButton"
+                        android:contentDescription="@string/action_clear_section_override"
+                        android:src="@drawable/ic_close_24" />
+                </LinearLayout>
+
+                <TextView
+                    style="@style/CocoFieldLabel"
+                    android:text="@string/field_xray_bin" />
+
+                <EditText
+                    android:id="@+id/xray_bin_input"
+                    style="@style/CocoFormEdit"
+                    android:text="AndroidLibXrayLite" />
+
+                <TextView
+                    style="@style/CocoFieldLabel"
+                    android:text="@string/field_loglevel" />
+
+                <TextView
+                    android:id="@+id/loglevel_select"
+                    style="@style/CocoFormSelect"
+                    android:text="warning" />
+
+                <Switch
+                    android:id="@+id/no_run_switch"
+                    style="@style/CocoFormSwitch"
+                    android:text="@string/field_no_run" />
+
+                <Switch
+                    android:id="@+id/once_switch"
+                    style="@style/CocoFormSwitch"
+                    android:text="@string/field_once" />
+
+                <Switch
+                    android:id="@+id/print_config_switch"
+                    style="@style/CocoFormSwitch"
+                    android:text="@string/field_print_config" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

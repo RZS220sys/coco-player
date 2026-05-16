@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/popup_width_add"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_popup"
+    android:orientation="vertical"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
+
+    <TextView
+        android:id="@+id/import_qrcode"
+        style="@style/CocoPopupRow"
+        android:text="@string/menu_import_qrcode" />
+
+    <TextView
+        android:id="@+id/import_clipboard"
+        style="@style/CocoPopupRow"
+        android:text="@string/menu_import_clipboard" />
+
+    <TextView
+        android:id="@+id/import_local_storage"
+        style="@style/CocoPopupRow"
+        android:text="@string/menu_import_local_storage" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="18dp"
+        android:layout_marginBottom="6dp"
+        android:background="@drawable/divider" />
+
+    <TextView
+        android:id="@+id/add_single_link"
+        style="@style/CocoPopupRow"
+        android:text="@string/menu_add_single_link" />
+
+    <TextView
+        android:id="@+id/add_chain_link"
+        style="@style/CocoPopupRow"
+        android:text="@string/add_chain_link" />
+</LinearLayout>

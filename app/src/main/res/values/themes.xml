@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Coco" parent="@android:style/Theme.Material.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:windowBackground">@color/coco_background</item>
+        <item name="android:colorAccent">@color/coco_primary</item>
+        <item name="android:navigationBarColor">@color/coco_background</item>
+        <item name="android:statusBarColor">@color/coco_background</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+    </style>
+
+    <style name="CocoDrawerRow">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/drawer_row_height</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:paddingStart">28dp</item>
+        <item name="android:paddingEnd">18dp</item>
+    </style>
+
+    <style name="CocoDrawerIcon">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:scaleType">center</item>
+    </style>
+
+    <style name="CocoDrawerText">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:fontFamily">sans</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:textColor">@color/coco_body</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="CocoPopupRow">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">56dp</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:paddingStart">24dp</item>
+        <item name="android:paddingEnd">24dp</item>
+        <item name="android:textColor">@color/coco_title</item>
+        <item name="android:textSize">17sp</item>
+    </style>
+
+    <style name="CocoConfigActionRow">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">52dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:foreground">?android:attr/selectableItemBackground</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+    </style>
+
+    <style name="CocoConfigActionIconChip">
+        <item name="android:layout_width">34dp</item>
+        <item name="android:layout_height">34dp</item>
+        <item name="android:background">@drawable/bg_config_action_icon_chip</item>
+    </style>
+
+    <style name="CocoConfigActionIcon">
+        <item name="android:layout_width">20dp</item>
+        <item name="android:layout_height">20dp</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+
+    <style name="CocoConfigActionText">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">14dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:fontFamily">sans</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:textColor">@color/coco_title</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="CocoFormSection">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">14dp</item>
+        <item name="android:layout_marginTop">12dp</item>
+        <item name="android:layout_marginEnd">14dp</item>
+        <item name="android:background">@drawable/bg_form_section</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:padding">14dp</item>
+    </style>
+
+    <style name="CocoSectionTitle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">sans</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:textColor">@color/coco_title</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="CocoOverrideSectionHeader">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:paddingBottom">10dp</item>
+    </style>
+
+    <style name="CocoOverrideSectionTitle" parent="CocoSectionTitle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:paddingBottom">0dp</item>
+    </style>
+
+    <style name="CocoOverrideStatusText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">30dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:paddingStart">10dp</item>
+        <item name="android:paddingEnd">10dp</item>
+        <item name="android:textColor">@color/coco_muted</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="CocoOverrideClearButton">
+        <item name="android:layout_width">32dp</item>
+        <item name="android:layout_height">32dp</item>
+        <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
+    <style name="CocoFieldLabel">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">sans</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">6dp</item>
+        <item name="android:textColor">@color/coco_body</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="CocoFieldHelp">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:textColor">@color/coco_muted</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="CocoFormEdit">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:background">@drawable/bg_form_field</item>
+        <item name="android:fontFamily">sans</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">@color/coco_title</item>
+        <item name="android:textColorHint">@color/coco_muted</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="CocoFormEditMultiline" parent="CocoFormEdit">
+        <item name="android:layout_height">104dp</item>
+        <item name="android:gravity">top|start</item>
+        <item name="android:inputType">textMultiLine|textUri</item>
+        <item name="android:singleLine">false</item>
+    </style>
+
+    <style name="CocoFormSelect" parent="CocoFormEdit">
+        <item name="android:clickable">true</item>
+        <item name="android:drawableEnd">@drawable/ic_arrow_drop_down_24</item>
+        <item name="android:drawablePadding">8dp</item>
+        <item name="android:focusable">true</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingEnd">10dp</item>
+    </style>
+
+    <style name="CocoFormSwitch">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:fontFamily">sans</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:textColor">@color/coco_body</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+</resources>

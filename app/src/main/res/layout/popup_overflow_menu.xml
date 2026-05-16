@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/popup_width_overflow"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_popup"
+    android:orientation="vertical"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
+
+    <TextView
+        android:id="@+id/sort_chain_links"
+        style="@style/CocoPopupRow"
+        android:text="@string/menu_sort_chain_links" />
+
+    <TextView
+        android:id="@+id/refresh_list"
+        style="@style/CocoPopupRow"
+        android:text="@string/menu_refresh_list" />
+
+    <TextView
+        android:id="@+id/open_logs"
+        style="@style/CocoPopupRow"
+        android:text="@string/drawer_logs" />
+</LinearLayout>

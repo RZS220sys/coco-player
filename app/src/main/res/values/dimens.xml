@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="toolbar_height">64dp</dimen>
+    <dimen name="bottom_bar_height">92dp</dimen>
+    <dimen name="icon_button_size">48dp</dimen>
+    <dimen name="row_icon_size">42dp</dimen>
+    <dimen name="drawer_width">344dp</dimen>
+    <dimen name="drawer_header_height">190dp</dimen>
+    <dimen name="drawer_row_height">56dp</dimen>
+    <dimen name="popup_width_add">300dp</dimen>
+    <dimen name="popup_width_overflow">220dp</dimen>
+    <dimen name="popup_width_config_actions">276dp</dimen>
+    <dimen name="undo_bar_bottom_margin">104dp</dimen>
+</resources>

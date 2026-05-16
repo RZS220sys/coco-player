@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_app"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_height"
+        android:background="@drawable/bg_surface"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp">
+
+        <ImageButton
+            android:id="@+id/back_button"
+            android:layout_width="@dimen/icon_button_size"
+            android:layout_height="@dimen/icon_button_size"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/action_back"
+            android:padding="10dp"
+            android:src="@drawable/ic_back_24" />
+
+        <TextView
+            android:id="@+id/title_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="sans"
+            android:includeFontPadding="false"
+            android:text="@string/screen_per_app_title"
+            android:textColor="@color/coco_title"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/more_button"
+            android:layout_width="@dimen/icon_button_size"
+            android:layout_height="@dimen/icon_button_size"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/action_more"
+            android:padding="10dp"
+            android:src="@drawable/ic_more_vert_24" />
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/CocoFormSection"
+        android:layout_marginBottom="0dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <Switch
+                android:id="@+id/per_app_enabled_switch"
+                style="@style/CocoFormSwitch"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:paddingTop="0dp"
+                android:text="@string/field_enable_per_app" />
+
+            <Switch
+                android:id="@+id/per_app_bypass_switch"
+                style="@style/CocoFormSwitch"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:paddingTop="0dp"
+                android:text="@string/field_bypass_mode" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/per_app_mode_help"
+            style="@style/CocoFieldHelp"
+            android:text="@string/per_app_include_help" />
+
+        <Switch
+            android:id="@+id/show_system_apps_switch"
+            style="@style/CocoFormSwitch"
+            android:text="@string/field_show_system_apps" />
+
+        <TextView
+            style="@style/CocoFieldLabel"
+            android:text="@string/field_search_apps" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/bg_form_field">
+
+            <EditText
+                android:id="@+id/search_input"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:fontFamily="sans"
+                android:hint="@string/field_search_apps_hint"
+                android:inputType="text"
+                android:paddingStart="12dp"
+                android:paddingEnd="48dp"
+                android:singleLine="true"
+                android:textColor="@color/coco_title"
+                android:textColorHint="@color/coco_muted"
+                android:textSize="15sp" />
+
+            <ImageButton
+                android:id="@+id/clear_search_button"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_gravity="end|center_vertical"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/action_clear_search"
+                android:padding="10dp"
+                android:src="@drawable/ic_close_24"
+                android:visibility="gone" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/app_count_text"
+            style="@style/CocoFieldHelp"
+            android:text="@string/per_app_loading" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="14dp"
+        android:layout_marginBottom="14dp"
+        android:layout_weight="1"
+        android:background="@drawable/bg_form_section">
+
+        <ListView
+            android:id="@+id/apps_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:divider="@drawable/divider"
+            android:dividerHeight="1dp"
+            android:fastScrollEnabled="false"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:scrollbars="vertical" />
+
+        <TextView
+            android:id="@+id/empty_apps_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fontFamily="sans"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:padding="24dp"
+            android:text="@string/per_app_no_apps"
+            android:textColor="@color/coco_muted"
+            android:textSize="15sp"
+            android:visibility="gone" />
+    </FrameLayout>
+</LinearLayout>

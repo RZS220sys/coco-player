@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawer_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_drawer"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/drawer_header"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/drawer_header_height"
+        android:background="@drawable/nav_header_bg">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/montserrat_thin"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="@string/drawer_brand"
+            android:textColor="@color/coco_title"
+            android:textSize="42sp" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/drawer_per_app_row"
+        style="@style/CocoDrawerRow">
+
+        <ImageView style="@style/CocoDrawerIcon" android:src="@drawable/ic_grid_24" />
+        <TextView style="@style/CocoDrawerText" android:text="@string/drawer_per_app" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/drawer_routing_row"
+        style="@style/CocoDrawerRow">
+
+        <ImageView style="@style/CocoDrawerIcon" android:src="@drawable/ic_route_24" />
+        <TextView style="@style/CocoDrawerText" android:text="@string/drawer_routing" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/drawer_assets_row"
+        style="@style/CocoDrawerRow">
+
+        <ImageView style="@style/CocoDrawerIcon" android:src="@drawable/ic_file_24" />
+        <TextView style="@style/CocoDrawerText" android:text="@string/drawer_asset_files" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/drawer_settings_row"
+        style="@style/CocoDrawerRow">
+
+        <ImageView style="@style/CocoDrawerIcon" android:src="@drawable/ic_settings_24" />
+        <TextView style="@style/CocoDrawerText" android:text="@string/drawer_settings" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/divider" />
+
+    <LinearLayout
+        android:id="@+id/drawer_logs_row"
+        style="@style/CocoDrawerRow">
+
+        <ImageView style="@style/CocoDrawerIcon" android:src="@drawable/ic_logs_24" />
+        <TextView style="@style/CocoDrawerText" android:text="@string/drawer_logs" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/drawer_updates_row"
+        style="@style/CocoDrawerRow">
+
+        <ImageView style="@style/CocoDrawerIcon" android:src="@drawable/ic_refresh_24" />
+        <TextView style="@style/CocoDrawerText" android:text="@string/drawer_updates" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/drawer_backup_row"
+        style="@style/CocoDrawerRow">
+
+        <ImageView style="@style/CocoDrawerIcon" android:src="@drawable/ic_backup_24" />
+        <TextView style="@style/CocoDrawerText" android:text="@string/drawer_backup_restore" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/drawer_about_row"
+        style="@style/CocoDrawerRow">
+
+        <ImageView style="@style/CocoDrawerIcon" android:src="@drawable/ic_info_24" />
+        <TextView style="@style/CocoDrawerText" android:text="@string/drawer_about" />
+    </LinearLayout>
+</LinearLayout>

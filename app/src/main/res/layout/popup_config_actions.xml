@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/popup_width_config_actions"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_config_action_panel"
+    android:orientation="vertical"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
+
+    <LinearLayout
+        android:id="@+id/test_real_delay"
+        style="@style/CocoConfigActionRow">
+
+        <FrameLayout
+            style="@style/CocoConfigActionIconChip">
+
+            <ImageView
+                style="@style/CocoConfigActionIcon"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_speed_24" />
+        </FrameLayout>
+
+        <TextView
+            style="@style/CocoConfigActionText"
+            android:text="@string/menu_test_real_delay" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/test_tcping"
+        style="@style/CocoConfigActionRow">
+
+        <FrameLayout
+            style="@style/CocoConfigActionIconChip">
+
+            <ImageView
+                style="@style/CocoConfigActionIcon"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_network_ping_24" />
+        </FrameLayout>
+
+        <TextView
+            style="@style/CocoConfigActionText"
+            android:text="@string/menu_test_tcping" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="18dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="18dp"
+        android:layout_marginBottom="6dp"
+        android:background="@drawable/divider_config_action" />
+
+    <LinearLayout
+        android:id="@+id/show_qrcode"
+        style="@style/CocoConfigActionRow">
+
+        <FrameLayout
+            style="@style/CocoConfigActionIconChip">
+
+            <ImageView
+                style="@style/CocoConfigActionIcon"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_qrcode_24" />
+        </FrameLayout>
+
+        <TextView
+            style="@style/CocoConfigActionText"
+            android:text="@string/menu_qrcode" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/copy_config"
+        style="@style/CocoConfigActionRow">
+
+        <FrameLayout
+            style="@style/CocoConfigActionIconChip">
+
+            <ImageView
+                style="@style/CocoConfigActionIcon"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_copy_24" />
+        </FrameLayout>
+
+        <TextView
+            style="@style/CocoConfigActionText"
+            android:text="@string/menu_copy" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/copy_full_config"
+        style="@style/CocoConfigActionRow">
+
+        <FrameLayout
+            style="@style/CocoConfigActionIconChip">
+
+            <ImageView
+                style="@style/CocoConfigActionIcon"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_file_copy_24" />
+        </FrameLayout>
+
+        <TextView
+            style="@style/CocoConfigActionText"
+            android:text="@string/menu_copy_full_config" />
+    </LinearLayout>
+</LinearLayout>
