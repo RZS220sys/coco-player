@@ -11,7 +11,9 @@ import com.player.coco.data.config.chainlink.ChainLinkConfigData
 import com.player.coco.data.config.chainlink.ChainLinkConfigDataMapper
 import com.player.coco.data.config.singlelink.SingleLinkConfigData
 import com.player.coco.data.config.singlelink.SingleLinkConfigDataMapper
+import com.player.coco.data.routing.RoutingSettingsStore
 import com.player.coco.logging.CocoLog
+import com.player.coco.xray.routing.XrayRoutingCompiler
 import com.player.coco.xray.single.SingleLinkOutboundBuilder
 
 import android.content.Context
@@ -88,7 +90,9 @@ object XrayRuntimeConfigBuilder {
         configSettings: JSONObject,
         includeTun: Boolean,
     ): JSONObject {
-        val exitOutbound = XrayShareLinkParser.parse(config.exitUri).outbound
+        val exitOutbound = config.exitUri
+            .takeIf { it.isNotBlank() }
+            ?.let { XrayShareLinkParser.parse(it).outbound }
         val frontends = parseFrontends(context, config, configSettings, routingDns)
         if (frontends.isEmpty()) {
             error("Subscription yielded no usable frontend configs.")
@@ -278,20 +282,23 @@ object XrayRuntimeConfigBuilder {
         chainSettings: JSONObject,
         includeTun: Boolean,
         frontendOutbounds: List<JSONObject>,
-        exitOutbound: JSONObject,
+        exitOutbound: JSONObject?,
     ): JSONObject {
-        val isChainLink = frontendOutbounds.isNotEmpty()
-        val inboundsResult = buildInbounds(localInbounds, routingDns, includeTun, includeChainInbound = isChainLink)
-        val taggedExit = if (isChainLink) addExitDialerProxy(exitOutbound) else addTag(exitOutbound, EXIT_TAG)
+        val hasFrontendPool = frontendOutbounds.isNotEmpty()
+        val usesChainDialer = hasFrontendPool && exitOutbound != null
+        val inboundsResult = buildInbounds(localInbounds, routingDns, includeTun, includeChainInbound = usesChainDialer)
+        val taggedExit = exitOutbound?.let { outbound ->
+            if (usesChainDialer) addExitDialerProxy(outbound) else addTag(outbound, EXIT_TAG)
+        }
         val taggedFrontends = frontendOutbounds.mapIndexed { index, outbound ->
             addTag(outbound, "%s%04d".format(FRONT_PREFIX, index + 1))
         }
 
         val outbounds = JSONArray()
-            .put(taggedExit)
+        taggedExit?.let { outbounds.put(it) }
 
         taggedFrontends.forEach { outbounds.put(it) }
-        if (isChainLink) {
+        if (usesChainDialer) {
             outbounds.put(chainDialer(localInbounds))
         }
         outbounds
@@ -303,7 +310,18 @@ object XrayRuntimeConfigBuilder {
             .put("dns", buildDns(routingDns, bootstrapDomains(taggedExit, taggedFrontends)))
             .put("inbounds", inboundsResult.inbounds)
             .put("outbounds", outbounds)
-            .put("routing", buildRouting(routingDns, chainSettings, inboundsResult.mainTags, taggedFrontends.size))
+            .put(
+                "routing",
+                buildRouting(
+                    context = context,
+                    routingDns = routingDns,
+                    chainSettings = chainSettings,
+                    mainTags = inboundsResult.mainTags,
+                    frontendCount = taggedFrontends.size,
+                    includeChainDialerRule = usesChainDialer,
+                    routeProxyToFrontendBalancer = hasFrontendPool && taggedExit == null,
+                )
+            )
             .put(
                 "policy",
                 JSONObject()
@@ -327,7 +345,7 @@ object XrayRuntimeConfigBuilder {
             )
             .put("stats", JSONObject())
 
-        if (isChainLink) {
+        if (hasFrontendPool) {
             buildObservatory(chainSettings)?.let { (key, value) -> config.put(key, value) }
         }
         return config
@@ -454,14 +472,18 @@ object XrayRuntimeConfigBuilder {
     }
 
     private fun buildRouting(
+        context: Context,
         routingDns: JSONObject,
         chainSettings: JSONObject,
         mainTags: List<String>,
         frontendCount: Int,
+        includeChainDialerRule: Boolean,
+        routeProxyToFrontendBalancer: Boolean,
     ): JSONObject {
         val rules = JSONArray()
+        val routingSettings = RoutingSettingsStore(context.filesDir).loadOrCreate()
 
-        if (frontendCount > 0) {
+        if (includeChainDialerRule) {
             rules.put(
                 JSONObject()
                     .put("type", "field")
@@ -470,43 +492,26 @@ object XrayRuntimeConfigBuilder {
             )
         }
 
-        if (routingDns.optBoolean("blockUdp443", false)) {
-            rules.put(
-                JSONObject()
-                    .put("type", "field")
-                    .put("inboundTag", JSONArray(mainTags))
-                    .put("network", "udp")
-                    .put("port", "443")
-                    .put("outboundTag", BLOCK_TAG)
-            )
-        }
-
-        if (routingDns.optBoolean("bypassPrivate", true)) {
-            rules.put(
-                JSONObject()
-                    .put("type", "field")
-                    .put("inboundTag", JSONArray(mainTags))
-                    .put("domain", JSONArray().put("geosite:private"))
-                    .put("outboundTag", DIRECT_TAG)
-            )
-            rules.put(
-                JSONObject()
-                    .put("type", "field")
-                    .put("inboundTag", JSONArray(mainTags))
-                    .put("ip", JSONArray().put("geoip:private"))
-                    .put("outboundTag", DIRECT_TAG)
-            )
-        }
-
-        rules.put(
-            JSONObject()
-                .put("type", "field")
-                .put("inboundTag", JSONArray(mainTags))
-                .put("outboundTag", EXIT_TAG)
+        val userRules = XrayRoutingCompiler.compileRules(
+            settings = routingSettings,
+            mainInboundTags = mainTags,
+            proxyTag = EXIT_TAG,
+            proxyBalancerTag = if (routeProxyToFrontendBalancer) FRONT_BALANCER else null,
+            directTag = DIRECT_TAG,
+            blockTag = BLOCK_TAG,
         )
+        for (index in 0 until userRules.length()) {
+            rules.put(userRules.getJSONObject(index))
+        }
 
         val routing = JSONObject()
-            .put("domainStrategy", routingDns.optString("domainStrategy", "IPIfNonMatch").ifBlank { "IPIfNonMatch" })
+            .put(
+                "domainStrategy",
+                XrayRoutingCompiler.domainStrategy(
+                    routingSettings,
+                    routingDns.optString("domainStrategy", "IPIfNonMatch").ifBlank { "IPIfNonMatch" }
+                )
+            )
             .put("rules", rules)
 
         if (frontendCount > 0) {
@@ -575,9 +580,9 @@ object XrayRuntimeConfigBuilder {
             .put("queryStrategy", if (routingDns.optBoolean("useIpv4", true)) "UseIPv4" else "UseIP")
     }
 
-    private fun bootstrapDomains(exitOutbound: JSONObject, frontendOutbounds: List<JSONObject>): List<String> {
+    private fun bootstrapDomains(exitOutbound: JSONObject?, frontendOutbounds: List<JSONObject>): List<String> {
         val hosts = linkedSetOf<String>()
-        hosts.addAll(outboundServerHosts(exitOutbound))
+        exitOutbound?.let { hosts.addAll(outboundServerHosts(it)) }
         frontendOutbounds.forEach { hosts.addAll(outboundServerHosts(it)) }
         return hosts
             .map { it.trim().trimEnd('.').lowercase() }

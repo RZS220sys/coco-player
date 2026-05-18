@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_app"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_height"
+        android:background="@drawable/bg_surface"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="8dp"
+        android:paddingEnd="12dp">
+
+        <ImageButton
+            android:id="@+id/back_button"
+            android:layout_width="@dimen/icon_button_size"
+            android:layout_height="@dimen/icon_button_size"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/action_back"
+            android:padding="10dp"
+            android:src="@drawable/ic_back_24" />
+
+        <TextView
+            android:id="@+id/title_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="sans"
+            android:includeFontPadding="false"
+            android:text="@string/screen_routing_profile_detail_title"
+            android:textColor="@color/coco_title"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/save_button"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_save_button"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:minWidth="82dp"
+            android:paddingStart="18dp"
+            android:paddingEnd="18dp"
+            android:text="@string/action_save"
+            android:textColor="@color/coco_title"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="24dp">
+
+            <LinearLayout style="@style/CocoFormSection">
+                <TextView
+                    style="@style/CocoSectionTitle"
+                    android:text="@string/routing_profile_info_section" />
+
+                <TextView
+                    style="@style/CocoFieldLabel"
+                    android:text="@string/routing_profile_name" />
+
+                <EditText
+                    android:id="@+id/profile_name_input"
+                    style="@style/CocoFormEdit"
+                    android:inputType="text"
+                    android:hint="@string/routing_profile_name_hint" />
+
+                <Switch
+                    android:id="@+id/profile_enabled_switch"
+                    style="@style/CocoFormSwitch"
+                    android:text="@string/routing_profile_enabled" />
+
+                <TextView
+                    style="@style/CocoFieldLabel"
+                    android:text="@string/field_domain_strategy" />
+
+                <TextView
+                    android:id="@+id/domain_strategy_select"
+                    style="@style/CocoFormSelect"
+                    android:text="IPIfNonMatch" />
+
+                <TextView
+                    style="@style/CocoFieldLabel"
+                    android:text="@string/routing_profile_source_url" />
+
+                <EditText
+                    android:id="@+id/source_url_input"
+                    style="@style/CocoFormEdit"
+                    android:inputType="textUri"
+                    android:hint="@string/routing_profile_source_url_hint" />
+            </LinearLayout>
+
+            <LinearLayout
+                style="@style/CocoFormSection"
+                android:paddingBottom="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/CocoOverrideSectionTitle"
+                        android:text="@string/routing_rules_section" />
+
+                    <ImageButton
+                        android:id="@+id/add_rule_button"
+                        android:layout_width="@dimen/icon_button_size"
+                        android:layout_height="@dimen/icon_button_size"
+                        android:background="?android:attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/routing_rule_add"
+                        android:padding="10dp"
+                        android:src="@drawable/ic_add_24" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/rules_summary"
+                    style="@style/CocoFieldHelp"
+                    android:text="@string/routing_rules_summary_empty" />
+
+                <ListView
+                    android:id="@+id/routing_rules_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="360dp"
+                    android:layout_marginTop="10dp"
+                    android:clipToPadding="false"
+                    android:divider="@drawable/divider"
+                    android:dividerHeight="1dp"
+                    android:fastScrollEnabled="false"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:scrollbars="vertical" />
+
+                <TextView
+                    android:id="@+id/empty_rules_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:fontFamily="sans"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:padding="24dp"
+                    android:text="@string/routing_rules_empty"
+                    android:textColor="@color/coco_muted"
+                    android:textSize="15sp"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

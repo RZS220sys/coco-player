@@ -2,6 +2,7 @@ package com.player.coco.data
 
 import android.util.AtomicFile
 import com.player.coco.data.config.ConnectConfigStore
+import com.player.coco.data.routing.RoutingSettingsStore
 import org.json.JSONObject
 import java.io.File
 import java.security.SecureRandom
@@ -109,6 +110,8 @@ object ConnectDataMigration {
         configStore.loadAll().forEach { config ->
             configStore.saveExisting(config.id, config.type, config.data)
         }
+        val routingSettingsStore = RoutingSettingsStore(filesDir)
+        routingSettingsStore.save(routingSettingsStore.load())
         rewriteGeneratedRuntimeConfig(filesDir)
     }
 

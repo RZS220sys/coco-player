@@ -60,6 +60,8 @@ class GlobalSettingsStore(private val filesDir: File) {
 
         private const val SETTINGS_FILE_NAME = "global_settings.json"
         private const val KEY_APP_MODE = "appMode"
+        const val KEY_APP_APPEARANCE = "appAppearance"
+        const val KEY_APP_APPEARANCE_PRESET_ID = "presetId"
         const val KEY_ACTIVE_CONFIG_ID = "activeConfigId"
     }
 }

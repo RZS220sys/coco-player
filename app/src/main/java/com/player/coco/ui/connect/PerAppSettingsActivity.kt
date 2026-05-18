@@ -5,6 +5,7 @@ import com.player.coco.data.PerAppSettingsStore
 import com.player.coco.logging.CocoLog
 import com.player.coco.R
 import com.player.coco.ui.dp
+import com.player.coco.ui.showAnchoredTo
 import com.player.coco.xray.runtime.XrayConnectionState
 import com.player.coco.xray.runtime.XrayServiceActions
 
@@ -275,7 +276,7 @@ class PerAppSettingsActivity : Activity() {
             popup.dismiss()
         }
 
-        popup.showAsDropDown(anchor, -width + anchor.width, -anchor.height)
+        popup.showAnchoredTo(anchor, content, width)
     }
 
     private fun finishMenuAction(popup: PopupWindow) {

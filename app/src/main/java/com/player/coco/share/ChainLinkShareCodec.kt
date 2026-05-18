@@ -114,7 +114,7 @@ object ChainLinkShareCodec : ConfigShareCodec {
 
         val name = records["n"]?.takeIf { it.isNotBlank() } ?: return null
         val subUrl = records["su"]?.takeIf { it.isNotBlank() } ?: return null
-        val exitUri = records["eu"]?.takeIf { it.isNotBlank() } ?: return null
+        val exitUri = records["eu"]?.takeIf { it.isNotBlank() }.orEmpty()
         val settings = JSONObject()
 
         records.forEach { (key, value) ->
@@ -141,7 +141,7 @@ object ChainLinkShareCodec : ConfigShareCodec {
         return when (path) {
             "name" -> config.name
             "subUrl" -> config.subUrl
-            "exitUri" -> config.exitUri
+            "exitUri" -> config.exitUri.takeIf { it.isNotBlank() }
             else -> valueAtJsonPath(config.settings, path.removePrefix("settings.").split("."))
         }
     }

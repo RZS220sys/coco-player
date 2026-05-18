@@ -8,7 +8,9 @@
     <application
         android:allowBackup="true"
         android:extractNativeLibs="true"
+        android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
+        android:roundIcon="@drawable/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Coco">
         <activity
@@ -25,6 +27,15 @@
             android:exported="false" />
         <activity
             android:name=".ui.connect.PerAppSettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.connect.routing.RoutingProfilesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.connect.routing.RoutingProfileDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.connect.routing.RoutingRuleEditorActivity"
             android:exported="false" />
         <service
             android:name=".xray.service.XrayVpnService"
@@ -45,12 +56,86 @@
             android:label="@string/app_name" />
         <activity
             android:name=".ui.MainActivity"
-            android:exported="true">
+            android:exported="true" />
+
+        <activity-alias
+            android:name=".launcher.CocoLauncher"
+            android:enabled="true"
+            android:exported="true"
+            android:icon="@drawable/ic_launcher"
+            android:label="@string/launcher_name_coco"
+            android:roundIcon="@drawable/ic_launcher_round"
+            android:targetActivity=".ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
+        </activity-alias>
+        <activity-alias
+            android:name=".launcher.CocoPlayLauncher"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@drawable/ic_launcher"
+            android:label="@string/launcher_name_coco_play"
+            android:roundIcon="@drawable/ic_launcher_round"
+            android:targetActivity=".ui.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".launcher.CucuLauncher"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@drawable/ic_launcher_cucu"
+            android:label="@string/launcher_name_cucu"
+            android:roundIcon="@drawable/ic_launcher_cucu_round"
+            android:targetActivity=".ui.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".launcher.MusicVibeLauncher"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@drawable/ic_launcher_music_note"
+            android:label="@string/launcher_name_music_vibe"
+            android:roundIcon="@drawable/ic_launcher_music_note_round"
+            android:targetActivity=".ui.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".launcher.CocoFaLauncher"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@drawable/ic_launcher"
+            android:label="@string/launcher_name_coco_fa"
+            android:roundIcon="@drawable/ic_launcher_round"
+            android:targetActivity=".ui.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".launcher.BroccoliLauncher"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@drawable/ic_launcher_broccoli"
+            android:label="@string/launcher_name_broccoli"
+            android:roundIcon="@drawable/ic_launcher_broccoli_round"
+            android:targetActivity=".ui.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
     </application>
 
 </manifest>

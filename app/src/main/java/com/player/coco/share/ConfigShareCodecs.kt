@@ -3,9 +3,10 @@ package com.player.coco.share
 import com.player.coco.data.config.ConnectConfigContainer
 
 object ConfigShareCodecs {
-    private val codecsByProtocol = listOf<ConfigShareCodec>(
+    private val codecs = listOf<ConfigShareCodec>(
         ChainLinkShareCodec,
-    ).associateBy { it.protocol }
+        SingleLinkShareCodec,
+    )
 
     fun encode(config: ConnectConfigContainer): String? {
         return codecForConfig(config)?.encode(config)
@@ -16,15 +17,14 @@ object ConfigShareCodecs {
     }
 
     fun codecForConfig(config: ConnectConfigContainer): ConfigShareCodec? {
-        return codecForProtocol(config.type)
+        return codecs.firstOrNull { it.protocol == config.type }
     }
 
     fun codecForLink(link: String): ConfigShareCodec? {
-        val protocol = link.trim().substringBefore("://", missingDelimiterValue = "")
-        return codecForProtocol(protocol)
+        return codecs.firstOrNull { it.canDecode(link) }
     }
 
     fun codecForProtocol(protocol: String): ConfigShareCodec? {
-        return codecsByProtocol[protocol]
+        return codecs.firstOrNull { it.protocol == protocol }
     }
 }

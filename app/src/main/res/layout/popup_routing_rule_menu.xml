@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_popup"
+    android:orientation="vertical"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
+
+    <TextView
+        android:id="@+id/rename_rule"
+        style="@style/CocoPopupRow"
+        android:text="@string/routing_rule_rename" />
+
+    <TextView
+        android:id="@+id/move_rule_up"
+        style="@style/CocoPopupRow"
+        android:text="@string/routing_rule_move_up" />
+
+    <TextView
+        android:id="@+id/move_rule_down"
+        style="@style/CocoPopupRow"
+        android:text="@string/routing_rule_move_down" />
+
+    <TextView
+        android:id="@+id/duplicate_rule"
+        style="@style/CocoPopupRow"
+        android:text="@string/routing_rule_duplicate" />
+
+    <TextView
+        android:id="@+id/delete_rule"
+        style="@style/CocoPopupRow"
+        android:text="@string/routing_rule_delete" />
+</LinearLayout>

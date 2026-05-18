@@ -50,4 +50,54 @@
         <item>VPN</item>
         <item>Proxy-only</item>
     </string-array>
+
+    <string-array name="routing_rule_outbound_options">
+        <item>proxy</item>
+        <item>direct</item>
+        <item>block</item>
+    </string-array>
+
+    <string-array name="routing_rule_network_options">
+        <item></item>
+        <item>tcp</item>
+        <item>udp</item>
+        <item>tcp,udp</item>
+    </string-array>
+
+    <string-array name="routing_rule_protocol_options">
+        <item>http</item>
+        <item>tls</item>
+        <item>bittorrent</item>
+    </string-array>
+
+    <string-array name="routing_rule_domain_suggestions">
+        <item>geosite:private</item>
+        <item>geosite:ir</item>
+        <item>geosite:category-ir</item>
+        <item>geosite:cn</item>
+        <item>geosite:category-ads-all</item>
+        <item>geosite:category-ads-ir</item>
+        <item>geosite:google</item>
+        <item>geosite:youtube</item>
+        <item>geosite:telegram</item>
+        <item>geosite:github</item>
+        <item>geosite:cloudflare</item>
+        <item>geosite:geolocation-!cn</item>
+        <item>domain:example.com</item>
+        <item>full:example.com</item>
+        <item>regexp:.*\\.example\\.com$</item>
+    </string-array>
+
+    <string-array name="routing_rule_ip_suggestions">
+        <item>geoip:private</item>
+        <item>geoip:ir</item>
+        <item>geoip:cn</item>
+        <item>geoip:us</item>
+        <item>geoip:telegram</item>
+        <item>geoip:cloudflare</item>
+        <item>10.0.0.0/8</item>
+        <item>172.16.0.0/12</item>
+        <item>192.168.0.0/16</item>
+        <item>127.0.0.0/8</item>
+    </string-array>
 </resources>

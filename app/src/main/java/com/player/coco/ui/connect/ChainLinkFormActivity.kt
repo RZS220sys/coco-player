@@ -129,8 +129,7 @@ class ChainLinkFormActivity : Activity() {
             ?: return null
         val subUrl = requiredText(R.id.sub_url_input, R.string.error_sub_url_required)
             ?: return null
-        val exitUri = requiredText(R.id.exit_uri_input, R.string.error_exit_uri_required)
-            ?: return null
+        val exitUri = textValue(R.id.exit_uri_input)
 
         return ChainLinkDraft(
             name = name,

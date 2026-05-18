@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <path
+        android:fillColor="@color/coco_background"
+        android:pathData="M54,4 C26.39,4 4,26.39 4,54 C4,81.61 26.39,104 54,104 C81.61,104 104,81.61 104,54 C104,26.39 81.61,4 54,4 Z" />
+
+    <path
+        android:fillColor="@color/coco_surface"
+        android:pathData="M54,14 C31.91,14 14,31.91 14,54 C14,76.09 31.91,94 54,94 C76.09,94 94,76.09 94,54 C94,31.91 76.09,14 54,14 Z" />
+
+    <path
+        android:fillColor="@color/coco_primary_dark"
+        android:pathData="M35,30 H73 C78.52,30 83,34.48 83,40 V68 C83,73.52 78.52,78 73,78 H35 C29.48,78 25,73.52 25,68 V40 C25,34.48 29.48,30 35,30 Z" />
+
+    <path
+        android:fillColor="@color/coco_surface_raised"
+        android:pathData="M38,36 H70 C73.31,36 76,38.69 76,42 V66 C76,69.31 73.31,72 70,72 H38 C34.69,72 32,69.31 32,66 V42 C32,38.69 34.69,36 38,36 Z" />
+
+    <path
+        android:fillColor="@color/coco_primary"
+        android:pathData="M41,59 C41,55.13 44.13,52 48,52 H60 C63.87,52 67,55.13 67,59 C67,62.87 63.87,66 60,66 H48 C44.13,66 41,62.87 41,59 Z" />
+
+    <path
+        android:fillColor="@color/coco_title"
+        android:pathData="M47,44 H52 V64 H47 Z M56,44 H61 V64 H56 Z" />
+
+    <path
+        android:fillColor="@color/coco_title"
+        android:fillAlpha="0.78"
+        android:pathData="M42,39 H47 V44 H42 Z M61,39 H66 V44 H61 Z" />
+</vector>

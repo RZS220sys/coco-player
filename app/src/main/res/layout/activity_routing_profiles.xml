@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_app"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_height"
+        android:background="@drawable/bg_surface"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp">
+
+        <ImageButton
+            android:id="@+id/back_button"
+            android:layout_width="@dimen/icon_button_size"
+            android:layout_height="@dimen/icon_button_size"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/action_back"
+            android:padding="10dp"
+            android:src="@drawable/ic_back_24" />
+
+        <TextView
+            android:id="@+id/title_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="sans"
+            android:includeFontPadding="false"
+            android:text="@string/screen_routing_profiles_title"
+            android:textColor="@color/coco_title"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/add_profile_button"
+            android:layout_width="@dimen/icon_button_size"
+            android:layout_height="@dimen/icon_button_size"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/routing_profile_add"
+            android:padding="10dp"
+            android:src="@drawable/ic_add_24" />
+    </LinearLayout>
+
+    <LinearLayout
+        style="@style/CocoFormSection"
+        android:layout_marginBottom="0dp">
+
+        <TextView
+            style="@style/CocoSectionTitle"
+            android:text="@string/routing_profiles_section" />
+
+        <TextView
+            android:id="@+id/routing_profiles_summary"
+            style="@style/CocoFieldHelp"
+            android:text="@string/routing_profiles_summary_empty" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="14dp"
+        android:layout_marginBottom="14dp"
+        android:layout_weight="1"
+        android:background="@drawable/bg_form_section">
+
+        <ListView
+            android:id="@+id/routing_profiles_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:divider="@drawable/divider"
+            android:dividerHeight="1dp"
+            android:fastScrollEnabled="false"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:scrollbars="vertical" />
+
+        <TextView
+            android:id="@+id/empty_routing_profiles_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fontFamily="sans"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:padding="24dp"
+            android:text="@string/routing_profiles_empty"
+            android:textColor="@color/coco_muted"
+            android:textSize="15sp"
+            android:visibility="gone" />
+    </FrameLayout>
+</LinearLayout>

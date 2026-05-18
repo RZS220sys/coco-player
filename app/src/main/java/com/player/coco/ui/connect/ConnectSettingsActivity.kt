@@ -3,6 +3,7 @@ package com.player.coco.ui.connect
 import com.player.coco.data.GlobalSettingsStore
 import com.player.coco.data.PerAppSettingsStore
 import com.player.coco.R
+import com.player.coco.ui.appearance.AppAppearancePresets
 import com.player.coco.ui.widget.CocoSelectField
 
 import android.app.Activity
@@ -17,10 +18,12 @@ import org.json.JSONObject
 class ConnectSettingsActivity : Activity() {
     private lateinit var store: GlobalSettingsStore
     private lateinit var appModeSelect: CocoSelectField
+    private lateinit var appearancePresetSelect: CocoSelectField
     private lateinit var inboundsSelect: CocoSelectField
     private lateinit var domainStrategySelect: CocoSelectField
     private lateinit var loglevelSelect: CocoSelectField
     private lateinit var xrayLoglevelSelect: CocoSelectField
+    private lateinit var appearanceOptions: List<Pair<String, String>>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +31,13 @@ class ConnectSettingsActivity : Activity() {
 
         store = GlobalSettingsStore(filesDir)
         appModeSelect = bindSelect(R.id.app_mode_select, R.array.app_mode_options)
+        appearanceOptions = AppAppearancePresets.all.map { preset ->
+            preset.id to getString(preset.labelRes)
+        }
+        appearancePresetSelect = CocoSelectField.bind(
+            field = findViewById(R.id.appearance_preset_select),
+            options = appearanceOptions.map { it.second },
+        )
         inboundsSelect = bindSelect(R.id.inbounds_select, R.array.inbound_type_options)
         domainStrategySelect = bindSelect(R.id.domain_strategy_select, R.array.domain_strategy_options)
         loglevelSelect = bindSelect(R.id.loglevel_select, R.array.loglevel_options)
@@ -45,7 +55,9 @@ class ConnectSettingsActivity : Activity() {
     }
 
     private fun saveSettings() {
-        store.save(buildSettingsJson())
+        val settings = buildSettingsJson()
+        store.save(settings)
+        AppAppearancePresets.apply(this, selectedAppearancePresetId())
         Toast.makeText(this, getString(R.string.settings_saved), Toast.LENGTH_SHORT).show()
         finish()
     }
@@ -54,6 +66,11 @@ class ConnectSettingsActivity : Activity() {
         val existing = store.load()
         return JSONObject()
             .put("appMode", appModeSelect.value)
+            .put(
+                GlobalSettingsStore.KEY_APP_APPEARANCE,
+                JSONObject()
+                    .put(GlobalSettingsStore.KEY_APP_APPEARANCE_PRESET_ID, selectedAppearancePresetId())
+            )
             .put(
                 "localInbounds",
                 JSONObject()
@@ -106,6 +123,13 @@ class ConnectSettingsActivity : Activity() {
 
     private fun populateSettings(settings: JSONObject) {
         setSelectIfPresent(settings, "appMode", appModeSelect)
+        val appearance = settings.optJSONObject(GlobalSettingsStore.KEY_APP_APPEARANCE)
+        setAppearancePreset(
+            appearance?.optString(
+                GlobalSettingsStore.KEY_APP_APPEARANCE_PRESET_ID,
+                AppAppearancePresets.DEFAULT_ID,
+            ) ?: AppAppearancePresets.DEFAULT_ID
+        )
 
         val localInbounds = settings.optJSONObject("localInbounds") ?: JSONObject()
         setTextIfPresent(localInbounds, "listen", R.id.listen_input)
@@ -154,6 +178,18 @@ class ConnectSettingsActivity : Activity() {
             field = findViewById(fieldId),
             options = resources.getStringArray(optionsId).toList(),
         )
+    }
+
+    private fun selectedAppearancePresetId(): String {
+        return appearanceOptions.firstOrNull { it.second == appearancePresetSelect.value }?.first
+            ?: AppAppearancePresets.DEFAULT_ID
+    }
+
+    private fun setAppearancePreset(presetId: String) {
+        val preset = AppAppearancePresets.find(presetId)
+        val label = appearanceOptions.firstOrNull { it.first == preset.id }?.second
+            ?: appearanceOptions.first().second
+        appearancePresetSelect.setValue(label)
     }
 
     private fun switchValue(switchId: Int): Boolean {

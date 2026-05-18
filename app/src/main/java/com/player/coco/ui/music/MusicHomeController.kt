@@ -3,6 +3,7 @@ package com.player.coco.ui.music
 import com.player.coco.R
 import com.player.coco.data.ConnectCryptoSession
 import com.player.coco.data.MusicSettingsStore
+import com.player.coco.ui.hideKeyboard
 
 import android.app.Activity
 import android.text.Editable
@@ -63,6 +64,7 @@ class MusicHomeController(
         ) {
             unlocked = true
             searchInput.setText("")
+            searchInput.hideKeyboard()
             onUnlockRequested()
             return
         }

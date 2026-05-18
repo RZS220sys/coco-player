@@ -114,7 +114,7 @@
 
                 <TextView
                     style="@style/CocoFieldHelp"
-                    android:text="@string/required_marker" />
+                    android:text="@string/optional_but_recommended_marker" />
 
             </LinearLayout>
 

@@ -10,8 +10,11 @@ import com.player.coco.logging.CocoLog
 import com.player.coco.R
 import com.player.coco.share.ConfigShareCodecs
 import com.player.coco.share.DecodedChainLinkDraft
+import com.player.coco.share.DecodedSingleLinkDraft
 import com.player.coco.ui.dp
+import com.player.coco.ui.connect.routing.RoutingProfilesActivity
 import com.player.coco.ui.getColorCompat
+import com.player.coco.ui.showAnchoredTo
 import com.player.coco.xray.runtime.XrayConnectionState
 import com.player.coco.xray.runtime.XrayCoreRuntime
 import com.player.coco.xray.runtime.XrayServiceActions
@@ -148,7 +151,10 @@ class CocoConnectHome(
             hideDrawer()
             activity.startActivity(Intent(activity, PerAppSettingsActivity::class.java))
         }
-        bindDrawerRow(R.id.drawer_routing_row, R.string.drawer_routing)
+        root.findViewById<View>(R.id.drawer_routing_row).setOnClickListener {
+            hideDrawer()
+            activity.startActivity(Intent(activity, RoutingProfilesActivity::class.java))
+        }
         bindDrawerRow(R.id.drawer_assets_row, R.string.drawer_asset_files)
         root.findViewById<View>(R.id.drawer_settings_row).setOnClickListener {
             hideDrawer()
@@ -317,7 +323,7 @@ class CocoConnectHome(
         }
 
         bindContent(content, popup)
-        popup.showAsDropDown(anchor, -width + anchor.width, -anchor.height)
+        popup.showAnchoredTo(anchor, content, width)
     }
 
     private fun bindPopupItem(parent: View, itemId: Int, labelRes: Int) {
@@ -358,8 +364,8 @@ class CocoConnectHome(
             return
         }
 
-        clipboard.setPrimaryClip(ClipData.newPlainText(activity.getString(R.string.clip_label_chain_link), link))
-        Toast.makeText(activity, R.string.chain_link_copied, Toast.LENGTH_SHORT).show()
+        clipboard.setPrimaryClip(ClipData.newPlainText(activity.getString(R.string.clip_label_config), link))
+        Toast.makeText(activity, R.string.config_copied, Toast.LENGTH_SHORT).show()
     }
 
     private fun queueConfigDelete(configId: Long) {
@@ -367,6 +373,7 @@ class CocoConnectHome(
             commitPendingDelete(renderAfterDelete = false)
         }
 
+        handleActiveConfigDelete(configId)
         pendingDeleteConfigId = configId
         pendingDeleteRunnable = Runnable {
             commitPendingDelete(renderAfterDelete = true)
@@ -398,6 +405,42 @@ class CocoConnectHome(
         if (renderAfterDelete) {
             renderChainLinks()
         }
+    }
+
+    private fun handleActiveConfigDelete(configId: Long) {
+        val configs = store.loadAll()
+        if (activeConfigId(configs) != configId) {
+            return
+        }
+
+        selectReplacementForDeletedConfig(configs, configId)
+        disconnectIfRunningConfig(configId)
+    }
+
+    private fun selectReplacementForDeletedConfig(configs: List<ConnectConfigContainer>, deletedConfigId: Long) {
+        val deletedIndex = configs.indexOfFirst { it.id == deletedConfigId }
+        val replacement = if (deletedIndex > 0) {
+            configs[deletedIndex - 1]
+        } else {
+            configs.firstOrNull { it.id != deletedConfigId }
+        }
+
+        settingsStore.saveActiveConfigId(replacement?.id ?: 0L)
+    }
+
+    private fun disconnectIfRunningConfig(configId: Long) {
+        val snapshot = XrayConnectionState.snapshot()
+        val runningDeletedConfig = snapshot.configId == configId &&
+            (snapshot.state == XrayConnectionState.STATE_CONNECTING ||
+                snapshot.state == XrayConnectionState.STATE_CONNECTED)
+        if (!runningDeletedConfig) {
+            return
+        }
+
+        pendingConfigId = 0L
+        XrayConnectionState.publishDisconnected(activity)
+        XrayServiceActions.stopAll(activity)
+        renderConnectionState()
     }
 
     private fun selectConfig(configId: Long) {
@@ -451,6 +494,13 @@ class CocoConnectHome(
                         store.saveNew(
                             ConnectConfigTypes.CHAIN_LINK,
                             ChainLinkConfigDataMapper.toJson(decoded.chainLink)
+                        )
+                        imported += 1
+                    }
+                    is DecodedSingleLinkDraft -> {
+                        store.saveNew(
+                            ConnectConfigTypes.SINGLE_LINK,
+                            SingleLinkConfigDataMapper.toJson(decoded.singleLink)
                         )
                         imported += 1
                     }

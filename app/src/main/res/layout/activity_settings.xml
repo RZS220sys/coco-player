@@ -83,6 +83,21 @@
             <LinearLayout style="@style/CocoFormSection">
                 <TextView
                     style="@style/CocoSectionTitle"
+                    android:text="@string/section_app_appearance" />
+
+                <TextView
+                    style="@style/CocoFieldLabel"
+                    android:text="@string/field_appearance_preset" />
+
+                <TextView
+                    android:id="@+id/appearance_preset_select"
+                    style="@style/CocoFormSelect"
+                    android:text="@string/launcher_name_coco" />
+            </LinearLayout>
+
+            <LinearLayout style="@style/CocoFormSection">
+                <TextView
+                    style="@style/CocoSectionTitle"
                     android:text="@string/section_local_inbounds" />
 
                 <TextView
