@@ -8,6 +8,10 @@ import android.widget.PopupWindow
 import android.widget.ScrollView
 import android.widget.TextView
 import com.player.coco.R
+import com.player.coco.ui.dp
+import com.player.coco.ui.getColorCompat
+import com.player.coco.ui.getDrawableCompat
+import com.player.coco.ui.obtainSelectableItemBackground
 
 class CocoSelectField private constructor(
     private val field: TextView,
@@ -54,20 +58,20 @@ class CocoSelectField private constructor(
             background = field.context.getDrawableCompat(R.drawable.bg_config_action_panel)
             addView(buildRows())
         }
-        val width = field.width.coerceAtLeast(dp(180))
-        val height = ((options.size * dp(48)) + dp(12)).coerceAtMost(dp(260))
+        val width = field.width.coerceAtLeast(field.dp(180))
+        val height = ((options.size * field.dp(48)) + field.dp(12)).coerceAtMost(field.dp(260))
         popup = PopupWindow(content, width, height, true).apply {
             isOutsideTouchable = true
-            elevation = dp(8).toFloat()
+            elevation = field.dp(8).toFloat()
             setBackgroundDrawable(ColorDrawable(android.graphics.Color.TRANSPARENT))
-            showAsDropDown(field, 0, -dp(2))
+            showAsDropDown(field, 0, -field.dp(2))
         }
     }
 
     private fun buildRows(): LinearLayout {
         return LinearLayout(field.context).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(0, dp(6), 0, dp(6))
+            setPadding(0, field.dp(6), 0, field.dp(6))
             options.forEach { option ->
                 addView(buildRow(option))
             }
@@ -78,12 +82,12 @@ class CocoSelectField private constructor(
         return TextView(field.context).apply {
             layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
-                dp(48)
+                field.dp(48)
             )
             background = field.context.obtainSelectableItemBackground()
             gravity = android.view.Gravity.CENTER_VERTICAL
             includeFontPadding = false
-            setPadding(dp(16), 0, dp(16), 0)
+            setPadding(field.dp(16), 0, field.dp(16), 0)
             setTextColor(field.context.getColorCompat(if (option == value) R.color.coco_primary else R.color.coco_title))
             text = option
             textSize = 15f
@@ -107,9 +111,6 @@ class CocoSelectField private constructor(
             options.firstOrNull().orEmpty()
         }
     }
-
-    private fun dp(value: Int): Int = (value * field.resources.displayMetrics.density).toInt()
-
     companion object {
         fun bind(
             field: TextView,
@@ -119,31 +120,5 @@ class CocoSelectField private constructor(
         ): CocoSelectField {
             return CocoSelectField(field, options, initialValue, onChanged)
         }
-    }
-}
-
-private fun android.content.Context.getColorCompat(colorRes: Int): Int {
-    return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-        getColor(colorRes)
-    } else {
-        resources.getColor(colorRes)
-    }
-}
-
-private fun android.content.Context.getDrawableCompat(drawableRes: Int): android.graphics.drawable.Drawable? {
-    return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-        getDrawable(drawableRes)
-    } else {
-        resources.getDrawable(drawableRes)
-    }
-}
-
-private fun android.content.Context.obtainSelectableItemBackground(): android.graphics.drawable.Drawable? {
-    val attrs = intArrayOf(android.R.attr.selectableItemBackground)
-    val typedArray = obtainStyledAttributes(attrs)
-    return try {
-        typedArray.getDrawable(0)
-    } finally {
-        typedArray.recycle()
     }
 }

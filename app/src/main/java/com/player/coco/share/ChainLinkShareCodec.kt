@@ -2,9 +2,11 @@ package com.player.coco.share
 
 import android.net.Uri
 import android.util.Base64
-import com.player.coco.data.ChainLinkConfig
-import com.player.coco.data.ChainLinkDraft
-import com.player.coco.data.ChainLinkStore
+import com.player.coco.data.config.ConnectConfigContainer
+import com.player.coco.data.config.ConnectConfigTypes
+import com.player.coco.data.config.chainlink.ChainLinkConfigData
+import com.player.coco.data.config.chainlink.ChainLinkConfigDataMapper
+import com.player.coco.data.config.chainlink.ChainLinkDraft
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.util.zip.Deflater
@@ -12,7 +14,7 @@ import java.util.zip.DataFormatException
 import java.util.zip.Inflater
 
 object ChainLinkShareCodec : ConfigShareCodec {
-    override val protocol: String = ChainLinkStore.TYPE_CHAIN_LINK
+    override val protocol: String = ConnectConfigTypes.CHAIN_LINK
 
     private const val KEY_SEPARATOR = ':'.code
     private const val DEFLATE_BUFFER_SIZE = 1024
@@ -73,10 +75,11 @@ object ChainLinkShareCodec : ConfigShareCodec {
         "settings.runtime.printConfig",
     )
 
-    override fun encode(config: ChainLinkConfig): String {
+    override fun encode(config: ConnectConfigContainer): String? {
+        val chainLink = ChainLinkConfigDataMapper.fromContainer(config) ?: return null
         val records = ByteArrayOutputStream()
         PARAM_PATHS.forEach { (key, path) ->
-            valueAtPath(config, path)?.let { value ->
+            valueAtPath(chainLink, path)?.let { value ->
                 records.writeRecord(key, value)
             }
         }
@@ -134,7 +137,7 @@ object ChainLinkShareCodec : ConfigShareCodec {
         )
     }
 
-    private fun valueAtPath(config: ChainLinkConfig, path: String): String? {
+    private fun valueAtPath(config: ChainLinkConfigData, path: String): String? {
         return when (path) {
             "name" -> config.name
             "subUrl" -> config.subUrl

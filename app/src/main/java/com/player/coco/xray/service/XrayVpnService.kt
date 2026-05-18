@@ -1,8 +1,8 @@
 package com.player.coco.xray.service
 
 import com.player.coco.data.GlobalSettingsStore
-import com.player.coco.data.ChainLinkStore
 import com.player.coco.data.PerAppSettingsStore
+import com.player.coco.data.config.ConnectConfigStore
 import com.player.coco.logging.CocoLog
 import com.player.coco.logging.LogMaintenance
 import com.player.coco.R
@@ -155,7 +155,7 @@ class XrayVpnService : VpnService() {
 
     private fun effectiveRoutingDns(configId: Long): JSONObject {
         val globalSettings = GlobalSettingsStore(filesDir).load()
-        val configSettings = ChainLinkStore(filesDir).load(configId)?.settings
+        val configSettings = ConnectConfigStore(filesDir).load(configId)?.data?.optJSONObject("settings")
         return configSettings?.optJSONObject("routingDns")
             ?: globalSettings.optJSONObject("routingDns")
             ?: JSONObject()

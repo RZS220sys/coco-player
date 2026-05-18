@@ -1,9 +1,18 @@
 package com.player.coco.xray
 
-import com.player.coco.data.ChainLinkConfig
-import com.player.coco.data.ChainLinkStore
+import com.player.coco.data.ConnectCryptoSession
+import com.player.coco.data.ConnectDataCipher
 import com.player.coco.data.GlobalSettingsStore
+import com.player.coco.data.MusicSettingsStore
+import com.player.coco.data.config.ConnectConfigContainer
+import com.player.coco.data.config.ConnectConfigStore
+import com.player.coco.data.config.ConnectConfigTypes
+import com.player.coco.data.config.chainlink.ChainLinkConfigData
+import com.player.coco.data.config.chainlink.ChainLinkConfigDataMapper
+import com.player.coco.data.config.singlelink.SingleLinkConfigData
+import com.player.coco.data.config.singlelink.SingleLinkConfigDataMapper
 import com.player.coco.logging.CocoLog
+import com.player.coco.xray.single.SingleLinkOutboundBuilder
 
 import android.content.Context
 import android.util.AtomicFile
@@ -31,20 +40,61 @@ object XrayRuntimeConfigBuilder {
         writeGeneratedConfig: Boolean = true,
     ): String {
         val config = selectedConfig(context, configId)
-        CocoLog.info(context, TAG, "Building Xray config for '${config.name}' (${config.type}).")
+        val configName = configName(config)
+        CocoLog.info(context, TAG, "Building Xray config for '$configName' (${config.type}).")
         val globalSettings = GlobalSettingsStore(context.filesDir).load()
-        val configSettings = config.settings
+        val configSettings = configSettings(config)
         val localInbounds = effectiveSection(configSettings, globalSettings, "localInbounds")
         val routingDns = effectiveSection(configSettings, globalSettings, "routingDns")
         val runtime = effectiveSection(configSettings, globalSettings, "runtime")
 
+        val json = when (config.type) {
+            ConnectConfigTypes.CHAIN_LINK -> buildChainLinkConfig(
+                context = context,
+                config = ChainLinkConfigDataMapper.fromContainer(config)
+                    ?: error("Invalid chain-link config data."),
+                localInbounds = localInbounds,
+                routingDns = routingDns,
+                runtime = runtime,
+                configSettings = configSettings,
+                includeTun = includeTun,
+            )
+            ConnectConfigTypes.SINGLE_LINK -> buildSingleLinkConfig(
+                context = context,
+                config = SingleLinkConfigDataMapper.fromContainer(config)
+                    ?: error("Invalid single-link config data."),
+                localInbounds = localInbounds,
+                routingDns = routingDns,
+                runtime = runtime,
+                configSettings = configSettings,
+                includeTun = includeTun,
+            )
+            else -> error("Unsupported config type: ${config.type}")
+        }.toString(2)
+
+        if (writeGeneratedConfig) {
+            writeGeneratedConfig(context, json)
+        }
+        CocoLog.info(context, TAG, "Generated Xray config for '$configName' (${config.type}).")
+        return json
+    }
+
+    private fun buildChainLinkConfig(
+        context: Context,
+        config: ChainLinkConfigData,
+        localInbounds: JSONObject,
+        routingDns: JSONObject,
+        runtime: JSONObject,
+        configSettings: JSONObject,
+        includeTun: Boolean,
+    ): JSONObject {
         val exitOutbound = XrayShareLinkParser.parse(config.exitUri).outbound
         val frontends = parseFrontends(context, config, configSettings, routingDns)
         if (frontends.isEmpty()) {
             error("Subscription yielded no usable frontend configs.")
         }
 
-        val json = buildConfig(
+        return buildConfig(
             context = context,
             localInbounds = localInbounds,
             routingDns = routingDns,
@@ -53,27 +103,59 @@ object XrayRuntimeConfigBuilder {
             includeTun = includeTun,
             frontendOutbounds = frontends,
             exitOutbound = exitOutbound,
-        ).toString(2)
-
-        if (writeGeneratedConfig) {
-            writeGeneratedConfig(context, json)
-        }
-        CocoLog.info(context, TAG, "Generated Xray config with ${frontends.size} frontend nodes.")
-        return json
+        )
     }
 
-    private fun selectedConfig(context: Context, configId: Long): ChainLinkConfig {
-        val store = ChainLinkStore(context.filesDir)
+    private fun buildSingleLinkConfig(
+        context: Context,
+        config: SingleLinkConfigData,
+        localInbounds: JSONObject,
+        routingDns: JSONObject,
+        runtime: JSONObject,
+        configSettings: JSONObject,
+        includeTun: Boolean,
+    ): JSONObject {
+        val outbound = SingleLinkOutboundBuilder.build(config.protocol, config.values)
+        return buildConfig(
+            context = context,
+            localInbounds = localInbounds,
+            routingDns = routingDns,
+            runtime = runtime,
+            chainSettings = configSettings,
+            includeTun = includeTun,
+            frontendOutbounds = emptyList(),
+            exitOutbound = outbound,
+        )
+    }
+
+    private fun selectedConfig(context: Context, configId: Long): ConnectConfigContainer {
+        val store = ConnectConfigStore(context.filesDir)
         return if (configId > 0L) {
             store.load(configId)
         } else {
             store.loadAll().firstOrNull()
-        } ?: error("No chain-link config is available.")
+        } ?: error("No connect config is available.")
+    }
+
+    private fun configName(config: ConnectConfigContainer): String {
+        return when (config.type) {
+            ConnectConfigTypes.CHAIN_LINK -> ChainLinkConfigDataMapper.fromContainer(config)?.name
+            ConnectConfigTypes.SINGLE_LINK -> SingleLinkConfigDataMapper.fromContainer(config)?.name
+            else -> config.data.optString("name")
+        }.orEmpty().ifBlank { config.type }
+    }
+
+    private fun configSettings(config: ConnectConfigContainer): JSONObject {
+        return when (config.type) {
+            ConnectConfigTypes.CHAIN_LINK -> ChainLinkConfigDataMapper.fromContainer(config)?.settings
+            ConnectConfigTypes.SINGLE_LINK -> SingleLinkConfigDataMapper.fromContainer(config)?.settings
+            else -> config.data.optJSONObject("settings")
+        } ?: JSONObject()
     }
 
     private fun parseFrontends(
         context: Context,
-        config: ChainLinkConfig,
+        config: ChainLinkConfigData,
         chainSettings: JSONObject,
         routingDns: JSONObject,
     ): List<JSONObject> {
@@ -198,8 +280,9 @@ object XrayRuntimeConfigBuilder {
         frontendOutbounds: List<JSONObject>,
         exitOutbound: JSONObject,
     ): JSONObject {
-        val inboundsResult = buildInbounds(localInbounds, routingDns, includeTun)
-        val taggedExit = addExitDialerProxy(exitOutbound)
+        val isChainLink = frontendOutbounds.isNotEmpty()
+        val inboundsResult = buildInbounds(localInbounds, routingDns, includeTun, includeChainInbound = isChainLink)
+        val taggedExit = if (isChainLink) addExitDialerProxy(exitOutbound) else addTag(exitOutbound, EXIT_TAG)
         val taggedFrontends = frontendOutbounds.mapIndexed { index, outbound ->
             addTag(outbound, "%s%04d".format(FRONT_PREFIX, index + 1))
         }
@@ -208,8 +291,10 @@ object XrayRuntimeConfigBuilder {
             .put(taggedExit)
 
         taggedFrontends.forEach { outbounds.put(it) }
+        if (isChainLink) {
+            outbounds.put(chainDialer(localInbounds))
+        }
         outbounds
-            .put(chainDialer(localInbounds))
             .put(directOutbound(routingDns))
             .put(blockOutbound())
 
@@ -242,7 +327,9 @@ object XrayRuntimeConfigBuilder {
             )
             .put("stats", JSONObject())
 
-        buildObservatory(chainSettings)?.let { (key, value) -> config.put(key, value) }
+        if (isChainLink) {
+            buildObservatory(chainSettings)?.let { (key, value) -> config.put(key, value) }
+        }
         return config
     }
 
@@ -269,7 +356,12 @@ object XrayRuntimeConfigBuilder {
         return log
     }
 
-    private fun buildInbounds(localInbounds: JSONObject, routingDns: JSONObject, includeTun: Boolean): InboundsResult {
+    private fun buildInbounds(
+        localInbounds: JSONObject,
+        routingDns: JSONObject,
+        includeTun: Boolean,
+        includeChainInbound: Boolean,
+    ): InboundsResult {
         val listen = localInbounds.optString("listen", "127.0.0.1").ifBlank { "127.0.0.1" }
         val inboundType = localInbounds.optString("inbounds", "socks").ifBlank { "socks" }
         val socksPort = localInbounds.optString("socksPort", "10809").toIntOrNull() ?: 10809
@@ -299,7 +391,9 @@ object XrayRuntimeConfigBuilder {
             mainTags.add("tun")
         }
 
-        inbounds.put(socksInbound(CHAIN_IN_TAG, "127.0.0.1", internalPort, routeOnly = true, sniffingEnabled = false))
+        if (includeChainInbound) {
+            inbounds.put(socksInbound(CHAIN_IN_TAG, "127.0.0.1", internalPort, routeOnly = true, sniffingEnabled = false))
+        }
 
         if (mainTags.isEmpty()) {
             error("No main inbound tags were generated.")
@@ -367,12 +461,14 @@ object XrayRuntimeConfigBuilder {
     ): JSONObject {
         val rules = JSONArray()
 
-        rules.put(
-            JSONObject()
-                .put("type", "field")
-                .put("inboundTag", JSONArray().put(CHAIN_IN_TAG))
-                .put("balancerTag", FRONT_BALANCER)
-        )
+        if (frontendCount > 0) {
+            rules.put(
+                JSONObject()
+                    .put("type", "field")
+                    .put("inboundTag", JSONArray().put(CHAIN_IN_TAG))
+                    .put("balancerTag", FRONT_BALANCER)
+            )
+        }
 
         if (routingDns.optBoolean("blockUdp443", false)) {
             rules.put(
@@ -409,25 +505,30 @@ object XrayRuntimeConfigBuilder {
                 .put("outboundTag", EXIT_TAG)
         )
 
-        val strategyType = stringSetting(chainSettings, "balancerStrategy", "leastLoad")
-        val strategy = JSONObject().put("type", strategyType)
-        if (strategyType == "leastLoad") {
-            val settings = JSONObject().put("expected", stringSetting(chainSettings, "expected", "4").toIntOrNull() ?: 4)
-            stringSetting(chainSettings, "maxRtt", "").takeIf { it.isNotBlank() }?.let { settings.put("maxRTT", it) }
-            stringSetting(chainSettings, "baseline", "").takeIf { it.isNotBlank() }?.let { settings.put("baselines", JSONArray().put(it)) }
-            strategy.put("settings", settings)
-        }
-
-        val balancer = JSONObject()
-            .put("tag", FRONT_BALANCER)
-            .put("selector", JSONArray().put(FRONT_PREFIX))
-            .put("fallbackTag", "%s%04d".format(FRONT_PREFIX, 1.coerceAtMost(frontendCount)))
-            .put("strategy", strategy)
-
-        return JSONObject()
+        val routing = JSONObject()
             .put("domainStrategy", routingDns.optString("domainStrategy", "IPIfNonMatch").ifBlank { "IPIfNonMatch" })
             .put("rules", rules)
-            .put("balancers", JSONArray().put(balancer))
+
+        if (frontendCount > 0) {
+            val strategyType = stringSetting(chainSettings, "balancerStrategy", "leastLoad")
+            val strategy = JSONObject().put("type", strategyType)
+            if (strategyType == "leastLoad") {
+                val settings = JSONObject().put("expected", stringSetting(chainSettings, "expected", "4").toIntOrNull() ?: 4)
+                stringSetting(chainSettings, "maxRtt", "").takeIf { it.isNotBlank() }?.let { settings.put("maxRTT", it) }
+                stringSetting(chainSettings, "baseline", "").takeIf { it.isNotBlank() }?.let { settings.put("baselines", JSONArray().put(it)) }
+                strategy.put("settings", settings)
+            }
+
+            val balancer = JSONObject()
+                .put("tag", FRONT_BALANCER)
+                .put("selector", JSONArray().put(FRONT_PREFIX))
+                .put("fallbackTag", "%s%04d".format(FRONT_PREFIX, 1.coerceAtMost(frontendCount)))
+                .put("strategy", strategy)
+
+            routing.put("balancers", JSONArray().put(balancer))
+        }
+
+        return routing
     }
 
     private fun buildObservatory(chainSettings: JSONObject): Pair<String, JSONObject>? {
@@ -550,10 +651,17 @@ object XrayRuntimeConfigBuilder {
     }
 
     private fun writeGeneratedConfigFile(filesDir: File, json: String) {
-        val atomicFile = AtomicFile(File(filesDir, ChainLinkStore.GENERATED_XRAY_CONFIG_NAME))
+        val atomicFile = AtomicFile(File(filesDir, ConnectConfigStore.GENERATED_XRAY_CONFIG_NAME))
         val output = atomicFile.startWrite()
         try {
-            output.write(json.toByteArray(Charsets.UTF_8))
+            val dataToWrite = if (MusicSettingsStore(filesDir).hasCocoConnectAuth()) {
+                val key = ConnectCryptoSession.keyOrNull()
+                    ?: throw IllegalStateException("Coco connect data is locked.")
+                ConnectDataCipher.serializeJson(JSONObject(json), key)
+            } else {
+                json
+            }
+            output.write(dataToWrite.toByteArray(Charsets.UTF_8))
             atomicFile.finishWrite(output)
         } catch (error: Exception) {
             atomicFile.failWrite(output)

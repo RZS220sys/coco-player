@@ -1,6 +1,7 @@
 package com.player.coco.xray
 
-import com.player.coco.data.ChainLinkStore
+import com.player.coco.data.config.ConnectConfigStore
+import com.player.coco.data.config.chainlink.ChainLinkConfigDataMapper
 import com.player.coco.logging.CocoLog
 import com.player.coco.xray.runtime.XrayConnectionState
 import com.player.coco.xray.runtime.XrayCoreRuntime
@@ -110,8 +111,10 @@ class XraySubscriptionRefresher(
     }
 
     private fun updateIntervalMillis(): Long? {
-        val settings = ChainLinkStore(appContext.filesDir).load(configId)?.settings
-            ?: return DEFAULT_INTERVAL_MILLIS
+        val settings = ChainLinkConfigDataMapper
+            .fromContainer(ConnectConfigStore(appContext.filesDir).load(configId))
+            ?.settings
+            ?: return null
         return parseIntervalMillis(settings.optString("subUpdateInterval", DEFAULT_INTERVAL_TEXT))
     }
 

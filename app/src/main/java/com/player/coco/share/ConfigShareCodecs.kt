@@ -1,13 +1,13 @@
 package com.player.coco.share
 
-import com.player.coco.data.ChainLinkConfig
+import com.player.coco.data.config.ConnectConfigContainer
 
 object ConfigShareCodecs {
     private val codecsByProtocol = listOf<ConfigShareCodec>(
         ChainLinkShareCodec,
     ).associateBy { it.protocol }
 
-    fun encode(config: ChainLinkConfig): String? {
+    fun encode(config: ConnectConfigContainer): String? {
         return codecForConfig(config)?.encode(config)
     }
 
@@ -15,7 +15,7 @@ object ConfigShareCodecs {
         return codecForLink(link)?.decode(link)
     }
 
-    fun codecForConfig(config: ChainLinkConfig): ConfigShareCodec? {
+    fun codecForConfig(config: ConnectConfigContainer): ConfigShareCodec? {
         return codecForProtocol(config.type)
     }
 

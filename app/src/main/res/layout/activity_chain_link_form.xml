@@ -68,7 +68,7 @@
             <LinearLayout style="@style/CocoFormSection">
                 <TextView
                     style="@style/CocoSectionTitle"
-                    android:text="@string/section_identity" />
+                    android:text="@string/section_config_info" />
 
                 <TextView
                     style="@style/CocoFieldLabel"

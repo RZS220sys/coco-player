@@ -1,9 +1,10 @@
-package com.player.coco.ui
+package com.player.coco.ui.connect
 
 import com.player.coco.data.PerAppSettings
 import com.player.coco.data.PerAppSettingsStore
 import com.player.coco.logging.CocoLog
 import com.player.coco.R
+import com.player.coco.ui.dp
 import com.player.coco.xray.runtime.XrayConnectionState
 import com.player.coco.xray.runtime.XrayServiceActions
 
@@ -301,8 +302,6 @@ class PerAppSettingsActivity : Activity() {
         clipboard.setPrimaryClip(ClipData.newPlainText(getString(R.string.clip_label_per_app_packages), text))
         Toast.makeText(this, R.string.per_app_exported, Toast.LENGTH_SHORT).show()
     }
-
-    private fun dp(value: Int): Int = (value * resources.displayMetrics.density).toInt()
 
     private fun loadIcon(packageName: String): Drawable? {
         if (!iconCache.containsKey(packageName)) {

@@ -1,4 +1,4 @@
-package com.player.coco.ui
+package com.player.coco.ui.connect
 
 import android.app.Activity
 import android.app.AlertDialog
@@ -14,9 +14,12 @@ import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
 import com.player.coco.R
-import com.player.coco.data.ChainLinkDraft
-import com.player.coco.data.ChainLinkStore
+import com.player.coco.data.config.ConnectConfigStore
+import com.player.coco.data.config.ConnectConfigTypes
+import com.player.coco.data.config.chainlink.ChainLinkConfigDataMapper
+import com.player.coco.data.config.chainlink.ChainLinkDraft
 import com.player.coco.data.GlobalSettingsStore
+import com.player.coco.ui.getColorCompat
 import com.player.coco.ui.widget.CocoSelectField
 import org.json.JSONObject
 
@@ -37,7 +40,7 @@ class ChainLinkFormActivity : Activity() {
     private lateinit var balancerStrategySelect: CocoSelectField
     private lateinit var domainStrategySelect: CocoSelectField
     private lateinit var loglevelSelect: CocoSelectField
-    private lateinit var store: ChainLinkStore
+    private lateinit var store: ConnectConfigStore
     private lateinit var globalSettingsStore: GlobalSettingsStore
     private var globalSettings = JSONObject()
     private var localInboundsOverridden = false
@@ -51,7 +54,7 @@ class ChainLinkFormActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chain_link_form)
 
-        store = ChainLinkStore(filesDir)
+        store = ConnectConfigStore(filesDir)
         globalSettingsStore = GlobalSettingsStore(filesDir)
         globalSettings = globalSettingsStore.load()
         configId = intent.getLongExtra(EXTRA_CONFIG_ID, NO_CONFIG_ID)
@@ -112,10 +115,10 @@ class ChainLinkFormActivity : Activity() {
     private fun saveChainLink() {
         val draft = buildDraftOrNull() ?: return
         if (isEditMode()) {
-            store.saveExisting(configId, draft)
+            store.saveExisting(configId, ConnectConfigTypes.CHAIN_LINK, ChainLinkConfigDataMapper.toJson(draft, existingCreatedAtMillis()))
             Toast.makeText(this, getString(R.string.chain_link_updated), Toast.LENGTH_SHORT).show()
         } else {
-            store.saveNew(draft)
+            store.saveNew(ConnectConfigTypes.CHAIN_LINK, ChainLinkConfigDataMapper.toJson(draft))
             Toast.makeText(this, getString(R.string.chain_link_saved), Toast.LENGTH_SHORT).show()
         }
         finish()
@@ -140,7 +143,7 @@ class ChainLinkFormActivity : Activity() {
 
     private fun buildSettingsJson(): JSONObject {
         val settings = JSONObject()
-            .put("generatedConfigName", ChainLinkStore.GENERATED_XRAY_CONFIG_NAME)
+            .put("generatedConfigName", ConnectConfigStore.GENERATED_XRAY_CONFIG_NAME)
             .put("subUpdateInterval", textValue(R.id.update_interval_input))
             .put("fetchTimeout", textValue(R.id.fetch_timeout_input))
             .put("maxFronts", textValue(R.id.max_fronts_input))
@@ -234,7 +237,7 @@ class ChainLinkFormActivity : Activity() {
     }
 
     private fun loadExistingChainLink() {
-        val config = store.load(configId)
+        val config = ChainLinkConfigDataMapper.fromContainer(store.load(configId))
         if (config == null) {
             Toast.makeText(this, getString(R.string.config_not_found), Toast.LENGTH_SHORT).show()
             finish()
@@ -245,6 +248,11 @@ class ChainLinkFormActivity : Activity() {
         setTextValue(R.id.sub_url_input, config.subUrl)
         setTextValue(R.id.exit_uri_input, config.exitUri)
         populateSettings(config.settings)
+    }
+
+    private fun existingCreatedAtMillis(): Long {
+        return ChainLinkConfigDataMapper.fromContainer(store.load(configId))?.createdAtMillis
+            ?: System.currentTimeMillis()
     }
 
     private fun populateSettings(settings: JSONObject) {
@@ -497,7 +505,7 @@ class ChainLinkFormActivity : Activity() {
             if (overridden) R.string.override_status_overriding
             else R.string.override_status_global
         )
-        label.setTextColor(getColorCompat(if (overridden) R.color.coco_primary else R.color.coco_muted))
+        label.setTextColor(this.getColorCompat(if (overridden) R.color.coco_primary else R.color.coco_muted))
         clearButton.visibility = if (overridden) View.VISIBLE else View.GONE
     }
 
@@ -524,14 +532,6 @@ class ChainLinkFormActivity : Activity() {
             "${parts[0]}.${parts[1]}.${parts[2]}.***"
         } else {
             host
-        }
-    }
-
-    private fun getColorCompat(colorRes: Int): Int {
-        return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            getColor(colorRes)
-        } else {
-            resources.getColor(colorRes)
         }
     }
 

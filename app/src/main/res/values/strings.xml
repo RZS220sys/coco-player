@@ -3,7 +3,18 @@
     <string name="app_name">Coco</string>
     <string name="drawer_brand">coco</string>
     <string name="screen_config_title">Config</string>
+    <string name="music_library_title">Library</string>
+    <string name="music_search_hint">Search songs, artists, albums</string>
+    <string name="action_search_music">Search music</string>
+    <string name="music_recent_tracks">Recently played</string>
+    <string name="music_searching">Searching library...</string>
+    <string name="music_search_unavailable">No local matches.</string>
+    <string name="music_row_daily_mix">Daily Mix</string>
+    <string name="music_row_daily_mix_meta">Made from your listening history</string>
+    <string name="music_row_favorites">Favorites</string>
+    <string name="music_row_favorites_meta">Songs and playlists you saved</string>
     <string name="chain_link_type">CHAIN LINK</string>
+    <string name="single_link_type">SINGLE LINK</string>
     <string name="status_not_connected">Not connected</string>
     <string name="status_connecting">Connecting</string>
     <string name="status_connected_vpn">Connected: VPN</string>
@@ -49,6 +60,8 @@
     <string name="placeholder_wired_later">%1$s will be wired later</string>
     <string name="screen_add_chain_link_title">Add chain-link</string>
     <string name="screen_edit_chain_link_title">Edit chain-link</string>
+    <string name="screen_add_single_link_title">Add single link</string>
+    <string name="screen_edit_single_link_title">Edit single link</string>
     <string name="screen_settings_title">Settings</string>
     <string name="screen_logs_title">Logs</string>
     <string name="screen_per_app_title">Per-app settings</string>
@@ -59,7 +72,7 @@
     <string name="action_copy_log_line">Copy line</string>
     <string name="required_marker">Required</string>
     <string name="optional_marker">Optional</string>
-    <string name="section_identity">Identity</string>
+    <string name="section_config_info">Config Info</string>
     <string name="section_core_chain">Core chain</string>
     <string name="section_local_inbounds">Local inbounds</string>
     <string name="section_subscription">Subscription refresh</string>
@@ -75,6 +88,8 @@
     <string name="field_show_system_apps">Show system apps</string>
     <string name="field_chain_name">Config name</string>
     <string name="field_chain_name_hint">e.g. Germany exit through dynamic frontends</string>
+    <string name="field_single_link_name_hint">e.g. Personal server</string>
+    <string name="field_config_type">Config type</string>
     <string name="field_sub_url">Subscription URL</string>
     <string name="field_sub_url_hint">https://example.com/sub.txt</string>
     <string name="field_exit_uri">Exit URI</string>
@@ -124,8 +139,17 @@
     <string name="confirm_clear_section_override">Clear overridden global setting for this section?</string>
     <string name="action_yes">Yes</string>
     <string name="action_no">No</string>
+    <string name="action_ok">OK</string>
+    <string name="action_no_thanks">No thanks</string>
+    <string name="connect_pass_dialog_title">Set Coco Connect pass?</string>
+    <string name="connect_pass_dialog_description">To connect to remote music services, set a pass. You should not forget this pass.</string>
+    <string name="connect_pass_input_hint">Enter pass</string>
+    <string name="connect_pass_repeat_hint">Repeat pass</string>
+    <string name="connect_pass_mismatch">Passes do not match.</string>
     <string name="chain_link_saved">Chain-link saved.</string>
     <string name="chain_link_updated">Chain-link updated.</string>
+    <string name="single_link_saved">Single link saved.</string>
+    <string name="single_link_updated">Single link updated.</string>
     <string name="settings_saved">Settings saved.</string>
     <string name="config_not_found">Config was not found.</string>
     <string name="field_search_logs">Search logs</string>
@@ -158,5 +182,5 @@
     <string name="error_config_name_required">Config name is required.</string>
     <string name="error_sub_url_required">Subscription URL is required.</string>
     <string name="error_exit_uri_required">Exit URI is required.</string>
-    <string name="empty_chain_links">No chain-links saved yet.</string>
+    <string name="empty_chain_links">No configs saved yet.</string>
 </resources>

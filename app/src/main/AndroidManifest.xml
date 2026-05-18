@@ -12,16 +12,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Coco">
         <activity
-            android:name=".ui.ChainLinkFormActivity"
+            android:name=".ui.connect.ChainLinkFormActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.SettingsActivity"
+            android:name=".ui.connect.SingleLinkFormActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.LogsActivity"
+            android:name=".ui.connect.ConnectSettingsActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.PerAppSettingsActivity"
+            android:name=".ui.connect.ConnectLogsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.connect.PerAppSettingsActivity"
             android:exported="false" />
         <service
             android:name=".xray.service.XrayVpnService"

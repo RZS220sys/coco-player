@@ -1,8 +1,8 @@
 package com.player.coco.share
 
-import com.player.coco.data.ChainLinkConfig
-import com.player.coco.data.ChainLinkDraft
-import com.player.coco.data.ChainLinkStore
+import com.player.coco.data.config.ConnectConfigContainer
+import com.player.coco.data.config.ConnectConfigTypes
+import com.player.coco.data.config.chainlink.ChainLinkDraft
 
 sealed interface DecodedConfigDraft {
     val protocol: String
@@ -11,13 +11,13 @@ sealed interface DecodedConfigDraft {
 data class DecodedChainLinkDraft(
     val chainLink: ChainLinkDraft,
 ) : DecodedConfigDraft {
-    override val protocol: String = ChainLinkStore.TYPE_CHAIN_LINK
+    override val protocol: String = ConnectConfigTypes.CHAIN_LINK
 }
 
 interface ConfigShareCodec {
     val protocol: String
 
-    fun encode(config: ChainLinkConfig): String
+    fun encode(config: ConnectConfigContainer): String?
 
     fun decode(link: String): DecodedConfigDraft?
 }

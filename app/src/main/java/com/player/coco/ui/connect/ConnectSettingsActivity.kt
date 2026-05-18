@@ -1,4 +1,4 @@
-package com.player.coco.ui
+package com.player.coco.ui.connect
 
 import com.player.coco.data.GlobalSettingsStore
 import com.player.coco.data.PerAppSettingsStore
@@ -14,7 +14,7 @@ import android.widget.TextView
 import android.widget.Toast
 import org.json.JSONObject
 
-class SettingsActivity : Activity() {
+class ConnectSettingsActivity : Activity() {
     private lateinit var store: GlobalSettingsStore
     private lateinit var appModeSelect: CocoSelectField
     private lateinit var inboundsSelect: CocoSelectField
@@ -94,6 +94,12 @@ class SettingsActivity : Activity() {
             .also { settings ->
                 existing.optJSONObject(PerAppSettingsStore.KEY_PER_APP)?.let {
                     settings.put(PerAppSettingsStore.KEY_PER_APP, it)
+                }
+                if (existing.has(GlobalSettingsStore.KEY_ACTIVE_CONFIG_ID)) {
+                    settings.put(
+                        GlobalSettingsStore.KEY_ACTIVE_CONFIG_ID,
+                        existing.optLong(GlobalSettingsStore.KEY_ACTIVE_CONFIG_ID, 0L)
+                    )
                 }
             }
     }

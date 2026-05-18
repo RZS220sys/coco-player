@@ -13,7 +13,8 @@ class GlobalSettingsStore(private val filesDir: File) {
         }
 
         return try {
-            JSONObject(settingsFile.readText(Charsets.UTF_8))
+            ConnectDataCipher.readJson(settingsFile.readText(Charsets.UTF_8), ConnectCryptoSession.keyOrNull())
+                ?: JSONObject()
         } catch (_: Exception) {
             JSONObject()
         }
@@ -24,7 +25,14 @@ class GlobalSettingsStore(private val filesDir: File) {
         val atomicFile = AtomicFile(settingsFile)
         val output = atomicFile.startWrite()
         try {
-            output.write(settings.toString(2).toByteArray(Charsets.UTF_8))
+            val dataToWrite = if (MusicSettingsStore(filesDir).hasCocoConnectAuth()) {
+                val key = ConnectCryptoSession.keyOrNull()
+                    ?: throw IllegalStateException("Coco connect data is locked.")
+                ConnectDataCipher.serializeJson(settings, key)
+            } else {
+                ConnectDataCipher.serializeJson(settings, key = null)
+            }
+            output.write(dataToWrite.toByteArray(Charsets.UTF_8))
             atomicFile.finishWrite(output)
         } catch (error: Exception) {
             atomicFile.failWrite(output)
@@ -52,6 +60,6 @@ class GlobalSettingsStore(private val filesDir: File) {
 
         private const val SETTINGS_FILE_NAME = "global_settings.json"
         private const val KEY_APP_MODE = "appMode"
-        private const val KEY_ACTIVE_CONFIG_ID = "activeConfigId"
+        const val KEY_ACTIVE_CONFIG_ID = "activeConfigId"
     }
 }

@@ -1,7 +1,10 @@
-package com.player.coco.ui
+package com.player.coco.ui.connect
 
 import com.player.coco.logging.CocoLog
 import com.player.coco.R
+import com.player.coco.ui.dp
+import com.player.coco.ui.getColorCompat
+import com.player.coco.ui.getDrawableCompat
 import com.player.coco.ui.widget.CocoSelectField
 
 import android.app.Activity
@@ -22,7 +25,7 @@ import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
 
-class LogsActivity : Activity() {
+class ConnectLogsActivity : Activity() {
     private lateinit var logVerbositySelect: CocoSelectField
     private lateinit var searchInput: EditText
     private lateinit var clearSearchButton: View
@@ -185,7 +188,7 @@ class LogsActivity : Activity() {
         override fun getItemId(position: Int): Long = position.toLong()
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-            val textView = (convertView as? TextView) ?: TextView(this@LogsActivity).apply {
+            val textView = (convertView as? TextView) ?: TextView(this@ConnectLogsActivity).apply {
                 typeface = Typeface.MONOSPACE
                 includeFontPadding = false
                 setTextColor(getColorCompat(R.color.coco_body))
@@ -203,21 +206,4 @@ class LogsActivity : Activity() {
         }
     }
 
-    private fun dp(value: Int): Int = (value * resources.displayMetrics.density).toInt()
-
-    private fun getColorCompat(colorRes: Int): Int {
-        return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            getColor(colorRes)
-        } else {
-            resources.getColor(colorRes)
-        }
-    }
-
-    private fun getDrawableCompat(drawableRes: Int): android.graphics.drawable.Drawable? {
-        return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            getDrawable(drawableRes)
-        } else {
-            resources.getDrawable(drawableRes)
-        }
-    }
 }
