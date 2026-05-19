@@ -2,7 +2,6 @@ package com.player.coco.ui.connect
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -135,7 +134,6 @@ class ChainLinkFormActivity : Activity() {
             name = name,
             subUrl = subUrl,
             exitUri = exitUri,
-            endpoint = endpointFromExitUri(exitUri),
             settings = buildSettingsJson(),
         )
     }
@@ -506,32 +504,6 @@ class ChainLinkFormActivity : Activity() {
         )
         label.setTextColor(this.getColorCompat(if (overridden) R.color.coco_primary else R.color.coco_muted))
         clearButton.visibility = if (overridden) View.VISIBLE else View.GONE
-    }
-
-    private fun endpointFromExitUri(exitUri: String): String {
-        return try {
-            val parsed = Uri.parse(exitUri)
-            val host = parsed.host.orEmpty()
-            val port = parsed.port
-            if (host.isBlank()) {
-                getString(R.string.chain_link_type)
-            } else if (port > 0) {
-                "${maskHost(host)} : $port"
-            } else {
-                maskHost(host)
-            }
-        } catch (_: Exception) {
-            getString(R.string.chain_link_type)
-        }
-    }
-
-    private fun maskHost(host: String): String {
-        val parts = host.split(".")
-        return if (parts.size == 4 && parts.all { it.toIntOrNull() != null }) {
-            "${parts[0]}.${parts[1]}.${parts[2]}.***"
-        } else {
-            host
-        }
     }
 
     private fun renderTitle() {

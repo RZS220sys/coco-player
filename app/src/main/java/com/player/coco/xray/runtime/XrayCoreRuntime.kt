@@ -91,6 +91,12 @@ object XrayCoreRuntime {
         return Libv2ray.checkVersionX()
     }
 
+    @Synchronized
+    fun measureOutboundDelay(context: Context, configJson: String, url: String): Long {
+        init(context)
+        return Libv2ray.measureOutboundDelay(configJson, url)
+    }
+
     private fun init(context: Context) {
         logContext = context.applicationContext
         if (initialized) {

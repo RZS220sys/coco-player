@@ -22,6 +22,7 @@
     <string name="chain_link_type">CHAIN LINK</string>
     <string name="single_link_type">SINGLE LINK</string>
     <string name="status_not_connected">Not connected</string>
+    <string name="status_not_connected_with_mode">Not connected\n%1$s</string>
     <string name="status_connecting">Connecting</string>
     <string name="status_connected_vpn">Connected: VPN</string>
     <string name="status_connected_proxy">Connected: proxy-only</string>
@@ -55,6 +56,8 @@
     <string name="menu_refresh_list">Refresh list</string>
     <string name="menu_test_real_delay">Test real delay</string>
     <string name="menu_test_tcping">Test Tcping</string>
+    <string name="latency_test_started">Testing %1$s...</string>
+    <string name="latency_test_done">%1$s updated.</string>
     <string name="menu_qrcode">QR-code</string>
     <string name="menu_copy">Copy</string>
     <string name="menu_copy_full_config">Copy full config</string>
@@ -69,6 +72,7 @@
     <string name="screen_add_single_link_title">Add single link</string>
     <string name="screen_edit_single_link_title">Edit single link</string>
     <string name="screen_settings_title">Settings</string>
+    <string name="screen_about_title">About</string>
     <string name="screen_logs_title">Logs</string>
     <string name="screen_per_app_title">Per-app settings</string>
     <string name="screen_routing_profiles_title">Routing settings</string>
@@ -89,12 +93,15 @@
     <string name="section_health">Health checks</string>
     <string name="section_balancer">Balancer</string>
     <string name="section_routing">Routing and DNS</string>
+    <string name="section_connection_tests">Connection tests</string>
     <string name="section_runtime">Runtime</string>
     <string name="section_logs">Logs</string>
     <string name="section_app_mode">App mode</string>
     <string name="section_app_appearance">App Appearance</string>
     <string name="field_app_mode">App Mode</string>
     <string name="field_appearance_preset">Launcher name and icon</string>
+    <string name="field_censor_token">Censor letters</string>
+    <string name="censor_no_censor">No censor</string>
     <string name="field_enable_per_app">Enable per-app</string>
     <string name="field_bypass_mode">Bypass mode</string>
     <string name="field_show_system_apps">Show system apps</string>
@@ -136,6 +143,9 @@
     <string name="field_bypass_private">Bypass private/LAN destinations</string>
     <string name="field_block_udp443">Block UDP/443</string>
     <string name="field_sniff_route_only">Sniff route only</string>
+    <string name="field_real_delay_url">Real delay target URL</string>
+    <string name="field_real_delay_url_hint">https://www.google.com/generate_204</string>
+    <string name="default_real_delay_url">https://www.google.com/generate_204</string>
     <string name="field_loglevel">Log level</string>
     <string name="field_xray_loglevel">Xray log level</string>
     <string name="field_xray_access_logs">Enable Xray access logs</string>
@@ -164,6 +174,14 @@
     <string name="single_link_saved">Single link saved.</string>
     <string name="single_link_updated">Single link updated.</string>
     <string name="settings_saved">Settings saved.</string>
+    <string name="about_section_app">App</string>
+    <string name="about_version_label">Version</string>
+    <string name="about_build_date_label">Build date</string>
+    <string name="about_license_section">License</string>
+    <string name="about_license_name">MIT License</string>
+    <string name="about_license_text">Permission is granted to use, copy, modify, merge, publish, distribute, sublicense, and sell copies of this software, subject to the MIT license terms.</string>
+    <string name="about_more_section">More</string>
+    <string name="about_more_text">More project information can be added here later.</string>
     <string name="config_not_found">Config was not found.</string>
     <string name="field_search_logs">Search logs</string>
     <string name="field_search_logs_hint">Filter lines</string>

@@ -93,6 +93,15 @@
                     android:id="@+id/appearance_preset_select"
                     style="@style/CocoFormSelect"
                     android:text="@string/launcher_name_coco" />
+
+                <TextView
+                    style="@style/CocoFieldLabel"
+                    android:text="@string/field_censor_token" />
+
+                <TextView
+                    android:id="@+id/censor_token_select"
+                    style="@style/CocoFormSelect"
+                    android:text="*" />
             </LinearLayout>
 
             <LinearLayout style="@style/CocoFormSection">
@@ -205,6 +214,23 @@
                     style="@style/CocoFormSwitch"
                     android:checked="true"
                     android:text="@string/field_sniff_route_only" />
+            </LinearLayout>
+
+            <LinearLayout style="@style/CocoFormSection">
+                <TextView
+                    style="@style/CocoSectionTitle"
+                    android:text="@string/section_connection_tests" />
+
+                <TextView
+                    style="@style/CocoFieldLabel"
+                    android:text="@string/field_real_delay_url" />
+
+                <EditText
+                    android:id="@+id/real_delay_url_input"
+                    style="@style/CocoFormEdit"
+                    android:hint="@string/field_real_delay_url_hint"
+                    android:inputType="textUri"
+                    android:text="@string/default_real_delay_url" />
             </LinearLayout>
 
             <LinearLayout style="@style/CocoFormSection">

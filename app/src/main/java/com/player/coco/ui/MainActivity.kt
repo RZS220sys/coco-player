@@ -12,24 +12,30 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.EditText
 import android.widget.LinearLayout
 
 class MainActivity : Activity() {
     private lateinit var musicSettingsStore: MusicSettingsStore
+    private lateinit var rootFrame: FrameLayout
     private lateinit var musicSurface: View
     private lateinit var musicHomeController: MusicHomeController
-    private lateinit var connectHome: CocoConnectHome
+    private var connectSurface: View? = null
+    private var connectHome: CocoConnectHome? = null
     private var connectUnlocked = false
+    private var activityStarted = false
+    private var connectStarted = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         musicSettingsStore = MusicSettingsStore(filesDir)
+        rootFrame = findViewById(R.id.root_frame)
         musicSurface = findViewById(R.id.music_surface)
-        connectHome = CocoConnectHome(this, findViewById(R.id.root_frame))
         musicHomeController = MusicHomeController(
             activity = this,
             root = musicSurface,
@@ -41,20 +47,24 @@ class MainActivity : Activity() {
             showMusicHome()
         } else {
             ConnectCryptoSession.unlockWithoutAuth()
-            showConnectHome()
+            showMusicHome()
             if (!musicSettingsStore.displayedConnectPassDialog()) {
                 showConnectPassDialog()
+            } else {
+                showConnectHome()
             }
         }
     }
 
     override fun onStart() {
         super.onStart()
-        connectHome.onStart()
+        activityStarted = true
+        startConnectHomeIfNeeded()
     }
 
     override fun onStop() {
-        connectHome.onStop()
+        stopConnectHomeIfNeeded()
+        activityStarted = false
         super.onStop()
     }
 
@@ -63,27 +73,63 @@ class MainActivity : Activity() {
         musicHomeController.onResume()
 
         if (connectUnlocked) {
-            connectHome.onResume()
+            connectHome?.onResume()
         } else if (!musicSettingsStore.hasCocoConnectAuth()) {
             ConnectCryptoSession.unlockWithoutAuth()
-            showConnectHome()
+            if (musicSettingsStore.displayedConnectPassDialog()) {
+                showConnectHome()
+            } else {
+                showMusicHome()
+            }
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        connectHome.onActivityResult(requestCode, resultCode)
+        connectHome?.onActivityResult(requestCode, resultCode)
     }
 
     private fun showMusicHome() {
         connectUnlocked = false
         musicSurface.visibility = View.VISIBLE
+        connectSurface?.visibility = View.GONE
     }
 
     private fun showConnectHome() {
         connectUnlocked = true
+        val home = ensureConnectHome()
         musicSurface.visibility = View.GONE
-        connectHome.onResume()
+        connectSurface?.visibility = View.VISIBLE
+        startConnectHomeIfNeeded()
+        home.onResume()
+    }
+
+    private fun ensureConnectHome(): CocoConnectHome {
+        connectHome?.let { return it }
+        val surface = LayoutInflater.from(this).inflate(R.layout.view_coco_connect_home, rootFrame, false)
+        rootFrame.addView(surface)
+        connectSurface = surface
+        return CocoConnectHome(this, surface).also {
+            connectHome = it
+        }
+    }
+
+    private fun startConnectHomeIfNeeded() {
+        val home = connectHome ?: return
+        if (!activityStarted || connectStarted) {
+            return
+        }
+        home.onStart()
+        connectStarted = true
+    }
+
+    private fun stopConnectHomeIfNeeded() {
+        val home = connectHome ?: return
+        if (!connectStarted) {
+            return
+        }
+        home.onStop()
+        connectStarted = false
     }
 
     private fun showConnectPassDialog() {

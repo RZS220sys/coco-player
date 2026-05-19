@@ -11,6 +11,7 @@
     <color name="coco_outline">#334047</color>
     <color name="coco_primary">#35A06B</color>
     <color name="coco_primary_dark">#257A51</color>
+    <color name="coco_error">#D95F5F</color>
     <color name="coco_connection_inactive">#565F5C</color>
     <color name="coco_connection_active">#2E9E62</color>
     <color name="coco_action_panel_start">#151C1A</color>

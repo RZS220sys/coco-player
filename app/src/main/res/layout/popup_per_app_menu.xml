@@ -16,11 +16,6 @@
         android:text="@string/per_app_invert_selection" />
 
     <TextView
-        android:id="@+id/auto_select_proxy_app"
-        style="@style/CocoPopupRow"
-        android:text="@string/per_app_auto_select_proxy_app" />
-
-    <TextView
         android:id="@+id/import_apps_clipboard"
         style="@style/CocoPopupRow"
         android:text="@string/per_app_import_clipboard" />

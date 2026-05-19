@@ -29,7 +29,19 @@ class ConnectConfigStore(private val filesDir: File) {
     }
 
     fun saveExisting(id: Long, type: String, data: JSONObject): ConnectConfigContainer {
-        return save(id, type, data)
+        val dataToSave = load(id)?.data?.let { existing ->
+            ConnectConfigMetrics.preserve(existing, data)
+        } ?: data
+        return save(id, type, dataToSave)
+    }
+
+    fun saveDisplayMetric(id: Long, metricKey: String, value: Int): ConnectConfigContainer? {
+        val config = load(id) ?: return null
+        return save(
+            id = config.id,
+            type = config.type,
+            data = ConnectConfigMetrics.withMetric(config.data, metricKey, value),
+        )
     }
 
     fun delete(id: Long): Boolean {

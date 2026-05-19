@@ -1,6 +1,5 @@
 package com.player.coco.share
 
-import android.net.Uri
 import android.util.Base64
 import com.player.coco.data.config.ConnectConfigContainer
 import com.player.coco.data.config.ConnectConfigTypes
@@ -19,7 +18,6 @@ object ChainLinkShareCodec : ConfigShareCodec {
     private const val KEY_SEPARATOR = ':'.code
     private const val DEFLATE_BUFFER_SIZE = 1024
     private const val MAX_INFLATED_BYTES = 512 * 1024
-    private const val FALLBACK_ENDPOINT = "CHAIN LINK"
 
     // Format: chain-link://base64url(raw-deflate(records)).
     // Record: utf8Key ':' u32leValueByteLength utf8ValueBytes.
@@ -131,7 +129,6 @@ object ChainLinkShareCodec : ConfigShareCodec {
                 name = name,
                 subUrl = subUrl,
                 exitUri = exitUri,
-                endpoint = endpointFromExitUri(exitUri),
                 settings = settings,
             )
         )
@@ -285,31 +282,5 @@ object ChainLinkShareCodec : ConfigShareCodec {
             throw IllegalArgumentException("Chain-link value is too large")
         }
         return value
-    }
-
-    private fun endpointFromExitUri(exitUri: String): String {
-        return try {
-            val parsed = Uri.parse(exitUri)
-            val host = parsed.host.orEmpty()
-            val port = parsed.port
-            if (host.isBlank()) {
-                FALLBACK_ENDPOINT
-            } else if (port > 0) {
-                "${maskHost(host)} : $port"
-            } else {
-                maskHost(host)
-            }
-        } catch (_: Exception) {
-            FALLBACK_ENDPOINT
-        }
-    }
-
-    private fun maskHost(host: String): String {
-        val parts = host.split(".")
-        return if (parts.size == 4 && parts.all { it.toIntOrNull() != null }) {
-            "${parts[0]}.${parts[1]}.${parts[2]}.***"
-        } else {
-            host
-        }
     }
 }

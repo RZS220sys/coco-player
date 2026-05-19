@@ -29,6 +29,9 @@
             android:name=".ui.connect.PerAppSettingsActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.connect.AboutActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.connect.routing.RoutingProfilesActivity"
             android:exported="false" />
         <activity

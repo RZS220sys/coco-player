@@ -118,7 +118,9 @@ class PerAppSettingsActivity : Activity() {
         loadingSettings = true
         val settings = store.load()
         initialSettings = settings
-        selectedPackages = settings.selectedPackages.toCollection(linkedSetOf())
+        selectedPackages = settings.selectedPackages
+            .filterNot { it == packageName }
+            .toCollection(linkedSetOf())
         enabledSwitch.isChecked = settings.enabled
         bypassSwitch.isChecked = settings.bypassMode
         showSystemAppsSwitch.isChecked = settings.showSystemApps
@@ -133,6 +135,7 @@ class PerAppSettingsActivity : Activity() {
             val apps = packageManager
                 .getInstalledApplications(0)
                 .mapNotNull { info -> info.toAppEntryOrNull() }
+                .filterNot { it.packageName == packageName }
                 .distinctBy { it.packageName }
                 .sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.label })
 
@@ -210,7 +213,7 @@ class PerAppSettingsActivity : Activity() {
             enabled = enabledSwitch.isChecked,
             bypassMode = bypassSwitch.isChecked,
             showSystemApps = showSystemAppsSwitch.isChecked,
-            selectedPackages = selectedPackages,
+            selectedPackages = selectedPackages.filterNot { it == packageName }.toSet(),
         )
     }
 
@@ -263,10 +266,6 @@ class PerAppSettingsActivity : Activity() {
             }
             finishMenuAction(popup)
         }
-        content.findViewById<View>(R.id.auto_select_proxy_app).setOnClickListener {
-            selectedPackages.add(packageName)
-            finishMenuAction(popup)
-        }
         content.findViewById<View>(R.id.import_apps_clipboard).setOnClickListener {
             importFromClipboard()
             finishMenuAction(popup)
@@ -292,7 +291,7 @@ class PerAppSettingsActivity : Activity() {
         val imported = text
             .split(Regex("[,\\s]+"))
             .map { it.trim() }
-            .filter { it in knownPackages }
+            .filter { it in knownPackages && it != packageName }
         selectedPackages.addAll(imported)
         Toast.makeText(this, getString(R.string.per_app_imported_count, imported.size), Toast.LENGTH_SHORT).show()
     }

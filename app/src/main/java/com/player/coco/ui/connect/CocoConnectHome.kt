@@ -1,6 +1,7 @@
 package com.player.coco.ui.connect
 
 import com.player.coco.data.GlobalSettingsStore
+import com.player.coco.data.config.ConnectConfigMetrics
 import com.player.coco.data.config.ConnectConfigContainer
 import com.player.coco.data.config.ConnectConfigStore
 import com.player.coco.data.config.ConnectConfigTypes
@@ -11,10 +12,13 @@ import com.player.coco.R
 import com.player.coco.share.ConfigShareCodecs
 import com.player.coco.share.DecodedChainLinkDraft
 import com.player.coco.share.DecodedSingleLinkDraft
+import com.player.coco.ui.ConfigItemSummaryBuilder
 import com.player.coco.ui.dp
+import com.player.coco.ui.EndpointDisplayMasker
 import com.player.coco.ui.connect.routing.RoutingProfilesActivity
 import com.player.coco.ui.getColorCompat
 import com.player.coco.ui.showAnchoredTo
+import com.player.coco.xray.ConfigLatencyTester
 import com.player.coco.xray.runtime.XrayConnectionState
 import com.player.coco.xray.runtime.XrayCoreRuntime
 import com.player.coco.xray.runtime.XrayServiceActions
@@ -31,6 +35,10 @@ import android.net.VpnService
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.AbsoluteSizeSpan
+import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageButton
@@ -53,6 +61,8 @@ class CocoConnectHome(
     private val settingsStore = GlobalSettingsStore(activity.filesDir)
     private var pendingConfigId = 0L
     private var pendingDeleteConfigId = 0L
+    private var connectionStatusDelay: Int? = null
+    private var connectionStatusTesting = false
     private val deleteHandler = Handler(Looper.getMainLooper())
     private var pendingDeleteRunnable: Runnable? = null
     private val connectionStateReceiver = object : BroadcastReceiver() {
@@ -142,6 +152,9 @@ class CocoConnectHome(
         connectButton.setOnClickListener {
             toggleConnection()
         }
+        connectionStateText.setOnClickListener {
+            testActiveRealDelay()
+        }
     }
 
     private fun bindDrawer() {
@@ -166,7 +179,10 @@ class CocoConnectHome(
         }
         bindDrawerRow(R.id.drawer_updates_row, R.string.drawer_updates)
         bindDrawerRow(R.id.drawer_backup_row, R.string.drawer_backup_restore)
-        bindDrawerRow(R.id.drawer_about_row, R.string.drawer_about)
+        root.findViewById<View>(R.id.drawer_about_row).setOnClickListener {
+            hideDrawer()
+            activity.startActivity(Intent(activity, AboutActivity::class.java))
+        }
     }
 
     private fun bindDrawerRow(rowId: Int, labelRes: Int) {
@@ -202,9 +218,19 @@ class CocoConnectHome(
             row.findViewById<View>(R.id.selected_indicator).visibility =
                 if (item.id == activeConfigId) View.VISIBLE else View.GONE
             row.findViewById<TextView>(R.id.config_name).text = configName(item)
-            row.findViewById<TextView>(R.id.config_endpoint).text = configEndpoint(item)
+            row.findViewById<TextView>(R.id.config_endpoint).text =
+                EndpointDisplayMasker.renderSummary(ConfigItemSummaryBuilder.fromConfig(item), endpointCensorToken())
             row.findViewById<TextView>(R.id.config_type).text = configTypeLabel(item)
-            row.findViewById<TextView>(R.id.config_latency).text = "-"
+            renderLatency(
+                label = row.findViewById(R.id.config_real_delay),
+                prefix = "delay",
+                value = ConnectConfigMetrics.lastRealDelay(item),
+            )
+            renderLatency(
+                label = row.findViewById(R.id.config_tcping),
+                prefix = "tcp",
+                value = ConnectConfigMetrics.lastTcping(item),
+            )
             renderPendingDeleteState(row, item.id == pendingDeleteConfigId)
 
             row.setOnClickListener {
@@ -238,6 +264,15 @@ class CocoConnectHome(
         row.findViewById<View>(R.id.config_more_button).isEnabled = !pendingDelete
         row.findViewById<View>(R.id.edit_button).isEnabled = !pendingDelete
         row.findViewById<View>(R.id.delete_button).isEnabled = !pendingDelete
+    }
+
+    private fun renderLatency(label: TextView, prefix: String, value: Int?) {
+        if (value == null) {
+            label.text = ""
+            return
+        }
+        label.text = "$prefix: ${value}ms"
+        label.setTextColor(activity.getColorCompat(if (value < 0) R.color.coco_error else R.color.coco_primary))
     }
 
     private fun toggleConnection() {
@@ -291,13 +326,62 @@ class CocoConnectHome(
             } else {
                 R.string.status_connected_proxy
             }
-            connectionStateText.text = activity.getString(statusRes)
             connectionStateText.setTextColor(activity.getColorCompat(R.color.coco_primary))
+            connectionStateText.text = connectedStatusText(activity.getString(statusRes))
             connectButton.setBackgroundResource(R.drawable.bg_connect_button_active)
         } else {
-            connectionStateText.text = activity.getString(R.string.status_not_connected)
+            connectionStatusDelay = null
+            connectionStatusTesting = false
+            connectionStateText.text = disconnectedStatusText()
             connectionStateText.setTextColor(activity.getColorCompat(R.color.coco_muted))
             connectButton.setBackgroundResource(R.drawable.bg_connect_button)
+        }
+    }
+
+    private fun disconnectedStatusText(): CharSequence {
+        val status = activity.getString(R.string.status_not_connected)
+        val mode = settingsStore.appMode()
+        val text = "$status\n$mode"
+        return SpannableString(text).apply {
+            setSpan(
+                AbsoluteSizeSpan(12, true),
+                status.length + 1,
+                text.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
+    }
+
+    private fun connectedStatusText(status: String): CharSequence {
+        val secondLine = when {
+            connectionStatusTesting -> "testing..."
+            connectionStatusDelay != null -> "delay: ${connectionStatusDelay}ms"
+            else -> ""
+        }
+        if (secondLine.isBlank()) {
+            return status
+        }
+
+        val text = "$status\n$secondLine"
+        val secondLineStart = status.length + 1
+        val secondLineColor = when {
+            connectionStatusTesting -> activity.getColorCompat(R.color.coco_muted)
+            (connectionStatusDelay ?: 0) < 0 -> activity.getColorCompat(R.color.coco_error)
+            else -> activity.getColorCompat(R.color.coco_primary)
+        }
+        return SpannableString(text).apply {
+            setSpan(
+                AbsoluteSizeSpan(12, true),
+                secondLineStart,
+                text.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            setSpan(
+                ForegroundColorSpan(secondLineColor),
+                secondLineStart,
+                text.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
         }
     }
 
@@ -334,8 +418,14 @@ class CocoConnectHome(
 
     private fun showConfigActions(anchor: View, config: ConnectConfigContainer) {
         showPopup(anchor, R.layout.popup_config_actions, R.dimen.popup_width_config_actions) { popupView, popup ->
-            bindConfigActionItem(popupView, R.id.test_real_delay, R.string.menu_test_real_delay, popup)
-            bindConfigActionItem(popupView, R.id.test_tcping, R.string.menu_test_tcping, popup)
+            popupView.findViewById<View>(R.id.test_real_delay).setOnClickListener {
+                popup.dismiss()
+                testRealDelay(config)
+            }
+            popupView.findViewById<View>(R.id.test_tcping).setOnClickListener {
+                popup.dismiss()
+                testTcping(config)
+            }
             bindConfigActionItem(popupView, R.id.show_qrcode, R.string.menu_qrcode, popup)
             bindConfigActionItem(popupView, R.id.copy_full_config, R.string.menu_copy_full_config, popup)
             popupView.findViewById<View>(R.id.copy_config).setOnClickListener {
@@ -350,6 +440,93 @@ class CocoConnectHome(
             popup.dismiss()
             showPlaceholder(activity.getString(labelRes))
         }
+    }
+
+    private fun testRealDelay(config: ConnectConfigContainer) {
+        Toast.makeText(
+            activity,
+            activity.getString(R.string.latency_test_started, activity.getString(R.string.menu_test_real_delay)),
+            Toast.LENGTH_SHORT
+        ).show()
+        Thread {
+            val result = ConfigLatencyTester.measureRealDelay(
+                context = activity.applicationContext,
+                configId = config.id,
+                targetUrl = realDelayTargetUrl(),
+            )
+            store.saveDisplayMetric(config.id, ConnectConfigMetrics.KEY_LAST_REAL_DELAY, result)
+            activity.runOnUiThread {
+                renderChainLinks()
+                Toast.makeText(
+                    activity,
+                    activity.getString(R.string.latency_test_done, activity.getString(R.string.menu_test_real_delay)),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }.start()
+    }
+
+    private fun testActiveRealDelay() {
+        val snapshot = XrayConnectionState.snapshot()
+        if (snapshot.state != XrayConnectionState.STATE_CONNECTED || snapshot.configId <= 0L || connectionStatusTesting) {
+            return
+        }
+        connectionStatusTesting = true
+        connectionStatusDelay = null
+        renderConnectionState()
+
+        Thread {
+            val result = ConfigLatencyTester.measureRealDelay(
+                context = activity.applicationContext,
+                configId = snapshot.configId,
+                targetUrl = realDelayTargetUrl(),
+            )
+            store.saveDisplayMetric(snapshot.configId, ConnectConfigMetrics.KEY_LAST_REAL_DELAY, result)
+            activity.runOnUiThread {
+                connectionStatusTesting = false
+                connectionStatusDelay = result
+                renderConnectionState()
+                renderChainLinks()
+            }
+        }.start()
+    }
+
+    private fun testTcping(config: ConnectConfigContainer) {
+        Toast.makeText(
+            activity,
+            activity.getString(R.string.latency_test_started, activity.getString(R.string.menu_test_tcping)),
+            Toast.LENGTH_SHORT
+        ).show()
+        Thread {
+            val result = ConfigLatencyTester.measureTcping(activity.applicationContext, config.id)
+            store.saveDisplayMetric(config.id, ConnectConfigMetrics.KEY_LAST_TCPING, result)
+            activity.runOnUiThread {
+                renderChainLinks()
+                Toast.makeText(
+                    activity,
+                    activity.getString(R.string.latency_test_done, activity.getString(R.string.menu_test_tcping)),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }.start()
+    }
+
+    private fun realDelayTargetUrl(): String {
+        return settingsStore.load()
+            .optJSONObject("connectionTests")
+            ?.optString("realDelayUrl")
+            ?.takeIf { it.isNotBlank() }
+            ?: ConnectSettingsActivity.DEFAULT_REAL_DELAY_URL
+    }
+
+    private fun endpointCensorToken(): String {
+        return settingsStore.load()
+            .optJSONObject(GlobalSettingsStore.KEY_APP_APPEARANCE)
+            ?.optString(
+                GlobalSettingsStore.KEY_APP_APPEARANCE_CENSOR_TOKEN,
+                ConnectSettingsActivity.DEFAULT_CENSOR_TOKEN
+            )
+            ?: ConnectSettingsActivity.DEFAULT_CENSOR_TOKEN
     }
 
     private fun copyConfig(config: ConnectConfigContainer) {
@@ -568,14 +745,6 @@ class CocoConnectHome(
             ConnectConfigTypes.SINGLE_LINK -> SingleLinkConfigDataMapper.fromContainer(config)?.name.orEmpty()
             else -> config.data.optString("name")
         }.ifBlank { activity.getString(R.string.screen_config_title) }
-    }
-
-    private fun configEndpoint(config: ConnectConfigContainer): String {
-        return when (config.type) {
-            ConnectConfigTypes.CHAIN_LINK -> ChainLinkConfigDataMapper.fromContainer(config)?.endpoint.orEmpty()
-            ConnectConfigTypes.SINGLE_LINK -> SingleLinkConfigDataMapper.fromContainer(config)?.endpoint.orEmpty()
-            else -> config.data.optString("endpoint")
-        }
     }
 
     private fun configTypeLabel(config: ConnectConfigContainer): String {

@@ -19,6 +19,7 @@ class ConnectSettingsActivity : Activity() {
     private lateinit var store: GlobalSettingsStore
     private lateinit var appModeSelect: CocoSelectField
     private lateinit var appearancePresetSelect: CocoSelectField
+    private lateinit var censorTokenSelect: CocoSelectField
     private lateinit var inboundsSelect: CocoSelectField
     private lateinit var domainStrategySelect: CocoSelectField
     private lateinit var loglevelSelect: CocoSelectField
@@ -38,6 +39,7 @@ class ConnectSettingsActivity : Activity() {
             field = findViewById(R.id.appearance_preset_select),
             options = appearanceOptions.map { it.second },
         )
+        censorTokenSelect = bindSelect(R.id.censor_token_select, R.array.censor_token_options)
         inboundsSelect = bindSelect(R.id.inbounds_select, R.array.inbound_type_options)
         domainStrategySelect = bindSelect(R.id.domain_strategy_select, R.array.domain_strategy_options)
         loglevelSelect = bindSelect(R.id.loglevel_select, R.array.loglevel_options)
@@ -70,6 +72,7 @@ class ConnectSettingsActivity : Activity() {
                 GlobalSettingsStore.KEY_APP_APPEARANCE,
                 JSONObject()
                     .put(GlobalSettingsStore.KEY_APP_APPEARANCE_PRESET_ID, selectedAppearancePresetId())
+                    .put(GlobalSettingsStore.KEY_APP_APPEARANCE_CENSOR_TOKEN, selectedCensorToken())
             )
             .put(
                 "localInbounds",
@@ -90,6 +93,11 @@ class ConnectSettingsActivity : Activity() {
                     .put("bypassPrivate", switchValue(R.id.bypass_private_switch))
                     .put("blockUdp443", switchValue(R.id.block_udp443_switch))
                     .put("sniffRouteOnly", switchValue(R.id.sniff_route_only_switch))
+            )
+            .put(
+                "connectionTests",
+                JSONObject()
+                    .put("realDelayUrl", textValue(R.id.real_delay_url_input).ifBlank { DEFAULT_REAL_DELAY_URL })
             )
             .put(
                 "runtime",
@@ -130,6 +138,12 @@ class ConnectSettingsActivity : Activity() {
                 AppAppearancePresets.DEFAULT_ID,
             ) ?: AppAppearancePresets.DEFAULT_ID
         )
+        setCensorToken(
+            appearance?.optString(
+                GlobalSettingsStore.KEY_APP_APPEARANCE_CENSOR_TOKEN,
+                DEFAULT_CENSOR_TOKEN,
+            ) ?: DEFAULT_CENSOR_TOKEN
+        )
 
         val localInbounds = settings.optJSONObject("localInbounds") ?: JSONObject()
         setTextIfPresent(localInbounds, "listen", R.id.listen_input)
@@ -146,6 +160,9 @@ class ConnectSettingsActivity : Activity() {
         setSwitchIfPresent(routingDns, "bypassPrivate", R.id.bypass_private_switch)
         setSwitchIfPresent(routingDns, "blockUdp443", R.id.block_udp443_switch)
         setSwitchIfPresent(routingDns, "sniffRouteOnly", R.id.sniff_route_only_switch)
+
+        val connectionTests = settings.optJSONObject("connectionTests") ?: JSONObject()
+        setTextIfPresent(connectionTests, "realDelayUrl", R.id.real_delay_url_input)
 
         val runtime = settings.optJSONObject("runtime") ?: JSONObject()
         setTextIfPresent(runtime, "xrayBin", R.id.xray_bin_input)
@@ -192,6 +209,17 @@ class ConnectSettingsActivity : Activity() {
         appearancePresetSelect.setValue(label)
     }
 
+    private fun selectedCensorToken(): String {
+        return when (censorTokenSelect.value) {
+            getString(R.string.censor_no_censor) -> ""
+            else -> censorTokenSelect.value
+        }
+    }
+
+    private fun setCensorToken(token: String) {
+        censorTokenSelect.setValue(token.ifBlank { getString(R.string.censor_no_censor) })
+    }
+
     private fun switchValue(switchId: Int): Boolean {
         return findViewById<Switch>(switchId).isChecked
     }
@@ -214,5 +242,10 @@ class ConnectSettingsActivity : Activity() {
         }
 
         select.setValue(settings.optString(key))
+    }
+
+    companion object {
+        const val DEFAULT_REAL_DELAY_URL = "https://www.google.com/generate_204"
+        const val DEFAULT_CENSOR_TOKEN = "*"
     }
 }

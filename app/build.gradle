@@ -1,19 +1,40 @@
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 
+def hasReleaseSigning = {
+    return System.getenv("COCO_RELEASE_STORE_FILE")?.trim() &&
+        System.getenv("COCO_RELEASE_STORE_PASSWORD")?.trim() &&
+        System.getenv("COCO_RELEASE_KEY_ALIAS")?.trim() &&
+        System.getenv("COCO_RELEASE_KEY_PASSWORD")?.trim()
+}
+
 android {
     namespace "com.player.coco"
     compileSdk 33
+
+    def cocoBuildDate = new Date().format("yyyy-MM-dd HH:mm 'UTC'", TimeZone.getTimeZone("UTC"))
 
     defaultConfig {
         applicationId "com.player.coco"
         minSdk 24
         targetSdk 33
-        versionCode 1
-        versionName "0.1.0"
+        versionCode 67
+        versionName "1.0.6"
+        buildConfigField "String", "BUILD_DATE", "\"${cocoBuildDate}\""
 
         ndk {
             abiFilters "armeabi-v7a", "arm64-v8a", "x86_64"
+        }
+    }
+
+    signingConfigs {
+        release {
+            if (hasReleaseSigning()) {
+                storeFile file(System.getenv("COCO_RELEASE_STORE_FILE"))
+                storePassword System.getenv("COCO_RELEASE_STORE_PASSWORD")
+                keyAlias System.getenv("COCO_RELEASE_KEY_ALIAS")
+                keyPassword System.getenv("COCO_RELEASE_KEY_PASSWORD")
+            }
         }
     }
 
@@ -31,6 +52,9 @@ android {
 
     buildTypes {
         release {
+            if (hasReleaseSigning()) {
+                signingConfig signingConfigs.release
+            }
             minifyEnabled false
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
